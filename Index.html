@@ -1,0 +1,2517 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTA Unified • สุ่มยศ + สอบกรม + มินิเกม | จุดเด่นทหารไทย</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&amp;family=Inter:wght@400;500;600&amp;display=swap');
+        
+        body { font-family: 'Prompt', 'Inter', system-ui, sans-serif; }
+        
+        .military-bg {
+            background-color: #0a120a;
+            background-image: 
+                linear-gradient(rgba(34, 197, 94, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(34, 197, 94, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        .neon-green { text-shadow: 0 0 10px #22c55e, 0 0 20px #22c55e; }
+        
+        .section-title { font-size: 1.35rem; font-weight: 700; letter-spacing: 1px; }
+        
+        .rank-item, .dept-item, .egg-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .mythical {
+            background: linear-gradient(135deg, #c026ff, #e11d8c, #f59e0b);
+            color: white; border-color: #fff;
+            box-shadow: 0 0 20px rgba(192, 38, 255, 0.6), 0 0 40px rgba(225, 29, 140, 0.4);
+        }
+        .super_rare { background-color: #9f1239; color: white; border-color: #f87171; box-shadow: 0 0 15px rgba(248, 113, 113, 0.5); }
+        .legendary { background-color: #ca8a04; color: #1e2937; border-color: #fde047; box-shadow: 0 0 15px rgba(234, 179, 8, 0.6); font-weight: 800; }
+        .rare { background-color: #0284c8; color: white; border-color: #38bdf8; }
+        .common { background-color: #166534; color: white; border-color: #4ade80; }
+        
+        .wheel-container {
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.85);
+            border: 6px solid #166534;
+        }
+        .wheel-container-red { border-color: #9f1239; }
+        
+        .result-card { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.8) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+        
+        .snow-canvas { pointer-events: none; z-index: 1; }
+        
+        .credit-green { background: linear-gradient(90deg, #166534, #4ade80); color: white; }
+        .credit-red { background: linear-gradient(90deg, #9f1239, #f87171); color: white; }
+        .credit-token { background: linear-gradient(90deg, #ca8a04, #fbbf24); color: #1e2937; }
+        
+        .modal { animation: fadeInScale 0.2s ease forwards; }
+        
+        .rta-header { background: linear-gradient(180deg, #111a11 0%, #0a120a 100%); }
+        
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #166534; border-radius: 3px; }
+        
+        /* Rarity Theme Background Tints */
+        #main-content.theme-mythical { box-shadow: 0 0 80px rgba(192, 38, 255, 0.25); border-radius: 24px; }
+        #main-content.theme-super_rare { box-shadow: 0 0 80px rgba(159, 18, 57, 0.35); border-radius: 24px; }
+        #main-content.theme-legendary { box-shadow: 0 0 80px rgba(202, 138, 4, 0.3); border-radius: 24px; }
+        #main-content.theme-rare { box-shadow: 0 0 80px rgba(2, 132, 200, 0.3); border-radius: 24px; }
+        #main-content.theme-common { box-shadow: 0 0 80px rgba(22, 101, 52, 0.3); border-radius: 24px; }
+
+        /* Rainbow Animated Border for Mini-game Card */
+        .rainbow-card {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+        .rainbow-card::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            background: linear-gradient(
+                90deg,
+                #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff, #8000ff, #ff0000
+            );
+            background-size: 300% 300%;
+            animation: rainbow-shift 2.5s linear infinite;
+            z-index: -1;
+            border-radius: 30px;
+            filter: blur(8px);
+            opacity: 0.85;
+        }
+        @keyframes rainbow-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .egg {
+            transition: transform 0.1s ease, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .egg:active {
+            transform: scale(0.92) rotate(5deg);
+        }
+        .egg-common { background: linear-gradient(#e0e7ff, #64748b); }
+        .egg-rare { background: linear-gradient(#bae6fd, #0284c8); }
+        .egg-legendary { background: linear-gradient(#fef08c, #ca8a04); box-shadow: 0 0 25px #fbbf24; }
+        .egg-mythical { background: linear-gradient(#f0abfc, #c026ff); box-shadow: 0 0 30px #e879f9; }
+        .egg-secret { background: linear-gradient(#1e2937, #0f172a); box-shadow: 0 0 40px #22c55e, inset 0 0 30px #eab308; }
+        
+        .item-card {
+            transition: all 0.2s ease;
+        }
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .nav-active {
+            background-color: #166534;
+            color: white;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="military-bg text-white min-h-screen overflow-x-hidden">
+    <!-- Snow Canvas -->
+    <canvas id="snow-canvas" class="snow-canvas fixed inset-0"></canvas>
+    
+    <!-- Navbar -->
+    <nav class="bg-black/80 border-b border-green-900 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-x-4">
+                <div class="flex items-center gap-x-3">
+                    <div class="h-14 w-14 bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl flex items-center justify-center text-4xl shadow-[0_0_20px_rgb(34,197,94)] border border-green-400">🪖</div>
+                    <div>
+                        <h1 class="text-3xl font-black tracking-tighter">RTA</h1>
+                        <p class="text-[10px] text-green-400 -mt-1 tracking-[3px]">Unified 2026 • สุ่ม + สอบ + มินิเกม</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Status -->
+            <div id="user-status" class="flex items-center gap-x-3">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Login / Register Gate -->
+    <div id="auth-gate" class="max-w-md mx-auto px-6 pt-12 pb-8 relative z-10">
+        <div class="bg-zinc-950 border border-green-800 rounded-3xl p-8">
+            <div class="text-center mb-8">
+                <div class="text-6xl mb-3">🪖</div>
+                <h2 class="text-4xl font-black tracking-tighter">ยินดีต้อนรับสู่ RTA Unified</h2>
+                <p class="text-green-400 mt-2">สร้างบัญชีเพื่อเริ่มสุ่มยศ สอบกรม และเล่นมินิเกม</p>
+            </div>
+            
+            <div class="flex border-b border-green-900 mb-6">
+                <button onclick="showAuthTab('register')" id="tab-register"
+                        class="flex-1 py-3 font-bold border-b-2 border-green-400 text-green-300">สร้างบัญชี</button>
+                <button onclick="showAuthTab('login')" id="tab-login"
+                        class="flex-1 py-3 font-bold text-zinc-400 hover:text-white">เข้าสู่ระบบ</button>
+            </div>
+            
+            <div id="auth-register">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-green-400 block mb-1.5">ชื่อในเกม</label>
+                        <input id="reg-name" type="text" placeholder="เช่น ทหารกล้า2026" class="w-full bg-black border border-green-800 focus:border-green-500 rounded-2xl px-5 py-3 text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-green-400 block mb-1.5">รหัสผ่าน</label>
+                        <input id="reg-pass" type="password" placeholder="อย่างน้อย 4 ตัวอักษร" class="w-full bg-black border border-green-800 focus:border-green-500 rounded-2xl px-5 py-3 text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-green-400 block mb-1.5">ยืนยันรหัสผ่าน</label>
+                        <input id="reg-pass2" type="password" placeholder="กรอกรหัสผ่านอีกครั้ง" class="w-full bg-black border border-green-800 focus:border-green-500 rounded-2xl px-5 py-3 text-white outline-none">
+                    </div>
+                    <button onclick="registerUser()" class="w-full py-4 font-black text-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 rounded-3xl transition-all active:scale-[0.985]">
+                        สร้างบัญชีและเข้าใช้งาน
+                    </button>
+                    <p class="text-center text-xs text-green-500">เมื่อสร้างบัญชีจะได้รับโทเค็นเริ่มต้น 50 หน่วย</p>
+                </div>
+            </div>
+            
+            <div id="auth-login" class="hidden">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-green-400 block mb-1.5">ชื่อในเกม</label>
+                        <input id="login-name" type="text" placeholder="ชื่อที่สมัครไว้" class="w-full bg-black border border-green-800 focus:border-green-500 rounded-2xl px-5 py-3 text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-green-400 block mb-1.5">รหัสผ่าน</label>
+                        <input id="login-pass" type="password" placeholder="รหัสผ่านของคุณ" class="w-full bg-black border border-green-800 focus:border-green-500 rounded-2xl px-5 py-3 text-white outline-none">
+                    </div>
+                    <button onclick="loginUser()" class="w-full py-4 font-black text-lg bg-zinc-800 hover:bg-zinc-700 border border-green-700 rounded-3xl transition-all active:scale-[0.985]">
+                        เข้าสู่ระบบ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Hub Content -->
+    <div id="main-hub" class="hidden max-w-7xl mx-auto px-6 pt-6 pb-12 relative z-10">
+        
+        <!-- Welcome + Balances -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-y-4">
+            <div>
+                <div id="welcome-text" class="text-3xl font-black tracking-tighter"></div>
+                <div class="text-green-400 text-sm">ยินดีต้อนรับกลับมา • เล่นได้ตามใจชอบ</div>
+            </div>
+            
+            <div class="flex items-center gap-x-3">
+                <!-- Green Credit -->
+                <div class="credit-green px-5 py-2 rounded-3xl flex items-center gap-x-3 shadow-lg">
+                    <div>
+                        <div class="text-xs font-bold tracking-wider opacity-80">เครดิตยศ</div>
+                        <div id="credit-green" class="text-3xl font-black tabular-nums">0</div>
+                    </div>
+                    <i class="fas fa-medal text-2xl opacity-75"></i>
+                </div>
+                
+                <!-- Red Credit -->
+                <div class="credit-red px-5 py-2 rounded-3xl flex items-center gap-x-3 shadow-lg">
+                    <div>
+                        <div class="text-xs font-bold tracking-wider opacity-80">เครดิตกรม</div>
+                        <div id="credit-red" class="text-3xl font-black tabular-nums">0</div>
+                    </div>
+                    <i class="fas fa-shield-alt text-2xl opacity-75"></i>
+                </div>
+                
+                <!-- Token Balance -->
+                <div class="credit-token px-5 py-2 rounded-3xl flex items-center gap-x-3 shadow-lg border border-yellow-400">
+                    <div>
+                        <div class="text-xs font-bold tracking-wider opacity-90">โทเค็นเหรียญ</div>
+                        <div id="credit-token" class="text-3xl font-black tabular-nums">50</div>
+                    </div>
+                    <i class="fas fa-coins text-2xl opacity-90"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Announcement -->
+        <div id="announcement-box" class="hidden mb-8 bg-zinc-950 border border-yellow-600 rounded-3xl p-5">
+            <div class="flex items-center gap-x-3 mb-2">
+                <i class="fas fa-bullhorn text-yellow-400 text-xl"></i>
+                <div class="font-bold text-yellow-300">ประกาศจากผู้ดูแลระบบ</div>
+            </div>
+            <div id="announcement-text" class="text-white text-sm leading-relaxed"></div>
+            <div id="announcement-time" class="text-xs text-yellow-500 mt-2"></div>
+        </div>
+        
+        <!-- THREE BIG CARDS -->
+        <div class="mb-10">
+            <div class="text-center mb-6">
+                <span class="section-title text-green-300">เลือกกิจกรรมที่ต้องการ</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Card 1: Exam -->
+                <div onclick="showSection('exam-section')" 
+                     class="group bg-zinc-950 border-2 border-green-700 hover:border-green-400 rounded-3xl p-8 cursor-pointer transition-all active:scale-[0.985] flex flex-col items-center text-center">
+                    <div class="text-7xl mb-4 group-hover:scale-110 transition-transform">📝</div>
+                    <div class="font-black text-2xl mb-2">สอบเข้ากรม</div>
+                    <div class="text-green-400 text-sm mb-4">20 ข้อต่อกรม • คะแนนเต็ม 100<br>+5 โทเค็นต่อข้อถูก</div>
+                    <div class="mt-auto px-6 py-2 bg-green-600 text-white text-sm font-bold rounded-2xl group-hover:bg-green-500">เริ่มสอบทันที</div>
+                </div>
+                
+                <!-- Card 2: Spin -->
+                <div onclick="showSection('spin-section')" 
+                     class="group bg-zinc-950 border-2 border-emerald-700 hover:border-emerald-400 rounded-3xl p-8 cursor-pointer transition-all active:scale-[0.985] flex flex-col items-center text-center">
+                    <div class="text-7xl mb-4 group-hover:scale-110 transition-transform">🎰</div>
+                    <div class="font-black text-2xl mb-2">สุ่มยศ &amp; กรม</div>
+                    <div class="text-emerald-400 text-sm mb-4">ใช้เครดิตเขียว/แดง<br>ทุกครั้งได้รับ +10 โทเค็นฟรี</div>
+                    <div class="mt-auto px-6 py-2 bg-emerald-600 text-white text-sm font-bold rounded-2xl group-hover:bg-emerald-500">หมุนวงล้อเลย</div>
+                </div>
+                
+                <!-- Card 3: Mini-games (Rainbow) -->
+                <div onclick="showSection('minigame-section')" 
+                     class="rainbow-card group bg-zinc-950 border-2 border-yellow-400 hover:border-yellow-300 rounded-3xl p-8 cursor-pointer transition-all active:scale-[0.985] flex flex-col items-center text-center">
+                    <div class="text-7xl mb-4 group-hover:scale-110 transition-transform">🎮</div>
+                    <div class="font-black text-2xl mb-2 text-yellow-300">มินิเกม</div>
+                    <div class="text-yellow-400 text-sm mb-4">ร้านค้าไอเท็ม + ทุบไข่ลุ้นรางวัล<br>Secret • Mythical • Legendary</div>
+                    <div class="mt-auto px-6 py-2 bg-yellow-500 text-black text-sm font-bold rounded-2xl group-hover:bg-yellow-400">เข้าเล่นมินิเกม</div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- Quick Inventory Access -->
+        <div class="text-center">
+            <button onclick="openInventoryModal()" 
+                    class="inline-flex items-center gap-x-3 px-8 py-3.5 bg-zinc-900 hover:bg-zinc-800 border border-green-800 rounded-3xl text-sm font-bold">
+                <i class="fas fa-briefcase text-green-400"></i>
+                <span>กระเป๋าของฉัน (Inventory)</span>
+            </button>
+            <div class="text-xs text-zinc-500 mt-2">เก็บไข่ • โทเค็น • ไอเท็มพิเศษ • โอนให้เพื่อนได้</div>
+        </div>
+        
+    </div>
+    
+    <!-- EXAM SECTION -->
+    <div id="exam-section" class="hidden max-w-5xl mx-auto px-6 pb-16">
+        <div class="flex items-center justify-between mb-6">
+            <button onclick="showSection('main-hub')" class="flex items-center gap-x-2 text-sm px-4 py-2 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-green-900">
+                <i class="fas fa-arrow-left"></i> <span>กลับหน้าหลัก</span>
+            </button>
+            <div class="text-xl font-black text-green-300">สอบเข้ากรม • 20 ข้อ</div>
+        </div>
+        
+        <!-- Department Selection (inside exam section) -->
+        <div id="exam-dept-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <!-- Populated by JS -->
+        </div>
+        
+        <!-- Leaderboard -->
+        <div class="mt-8">
+            <div class="flex items-center justify-between mb-4 px-1">
+                <span class="section-title text-green-300 flex items-center gap-x-2">
+                    <i class="fas fa-trophy"></i> 
+                    <span>กระดานคะแนนรวม (ทุกกรม)</span>
+                </span>
+            </div>
+            <div class="bg-zinc-950 border border-green-800 rounded-3xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="bg-black/60">
+                        <tr>
+                            <th class="px-4 py-3 text-left w-12">ลำดับ</th>
+                            <th class="px-4 py-3 text-left">ชื่อในเกม</th>
+                            <th class="px-4 py-3 text-left">กรมที่สอบ</th>
+                            <th class="px-4 py-3 text-center">คะแนน</th>
+                            <th class="px-4 py-3 text-center">สถานะ</th>
+                            <th class="px-4 py-3 text-center w-16" id="admin-actions-header-exam" style="display:none;">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body" class="divide-y divide-green-900">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SPIN SECTION -->
+    <div id="spin-section" class="hidden max-w-7xl mx-auto px-6 pb-16">
+        <div class="flex items-center justify-between mb-6">
+            <button onclick="showSection('main-hub')" class="flex items-center gap-x-2 text-sm px-4 py-2 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-green-900">
+                <i class="fas fa-arrow-left"></i> <span>กลับหน้าหลัก</span>
+            </button>
+            <div class="text-xl font-black text-emerald-300">วงล้อสุ่มยศ &amp; กรม • +10 โทเค็นทุกครั้ง</div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- RANK WHEEL -->
+            <div>
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <div class="flex items-center gap-x-3">
+                        <span class="section-title text-green-300">วงล้อสุ่มยศ</span>
+                        <span class="px-3 py-1 text-xs bg-green-950 text-green-400 rounded-full font-mono border border-green-800">ใช้เครดิตเขียว 1 หน่วย</span>
+                    </div>
+                </div>
+                
+                <div id="wheel-container-rank" class="wheel-container relative mx-auto overflow-hidden rounded-3xl bg-black/70 h-[108px] flex items-center border-green-600">
+                    <div class="absolute left-1/2 top-0 bottom-0 z-20 flex items-center justify-center -ml-[2px]">
+                        <div class="w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[22px] border-t-green-400 drop-shadow-[0_0_8px_rgb(74,222,128)]"></div>
+                    </div>
+                    <div id="wheel-rank" class="flex items-center h-full will-change-transform gap-2" style="transform: translateX(-420px);"></div>
+                </div>
+                
+                <div class="mt-4 flex justify-center">
+                    <button id="spin-rank-btn" onclick="spinRank()" class="group px-10 py-4 text-xl font-black tracking-wider bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 active:scale-[0.985] transition-all rounded-3xl shadow-[0_10px_30px_rgb(16,185,129,0.4)] flex items-center gap-x-3">
+                        <i class="fas fa-dice fa-lg group-active:rotate-12 transition-transform"></i>
+                        <span>สุ่มยศ (ใช้ 1 เครดิตเขียว)</span>
+                    </button>
+                </div>
+                
+                <div id="rank-result-area" class="hidden mt-5 max-w-md mx-auto">
+                    <div class="result-card bg-zinc-950 border border-green-700 rounded-3xl p-5 text-center">
+                        <div class="text-xs uppercase tracking-[2px] text-green-400 mb-1">ยศที่ได้รับ</div>
+                        <div id="rank-result-content"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- DEPT WHEEL -->
+            <div>
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <div class="flex items-center gap-x-3">
+                        <span class="section-title text-red-300">วงล้อสุ่มกรม</span>
+                        <span class="px-3 py-1 text-xs bg-red-950 text-red-400 rounded-full font-mono border border-red-800">ใช้เครดิตแดง 1 หน่วย</span>
+                    </div>
+                </div>
+                
+                <div id="wheel-container-dept" class="wheel-container wheel-container-red relative mx-auto overflow-hidden rounded-3xl bg-black/70 h-[108px] flex items-center border-red-700">
+                    <div class="absolute left-1/2 top-0 bottom-0 z-20 flex items-center justify-center -ml-[2px]">
+                        <div class="w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[22px] border-t-red-400 drop-shadow-[0_0_8px_rgb(248,113,113)]"></div>
+                    </div>
+                    <div id="wheel-dept" class="flex items-center h-full will-change-transform gap-2" style="transform: translateX(-420px);"></div>
+                </div>
+                
+                <div class="mt-4 flex justify-center">
+                    <button id="spin-dept-btn" onclick="spinDept()" class="group px-10 py-4 text-xl font-black tracking-wider bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.985] transition-all rounded-3xl shadow-[0_10px_30px_rgb(190,18,60,0.4)] flex items-center gap-x-3">
+                        <i class="fas fa-dice fa-lg group-active:rotate-12 transition-transform"></i>
+                        <span>สุ่มกรม (ใช้ 1 เครดิตแดง)</span>
+                    </button>
+                </div>
+                
+                <div id="dept-result-area" class="hidden mt-5 max-w-md mx-auto">
+                    <div class="result-card bg-zinc-950 border border-red-700 rounded-3xl p-5 text-center">
+                        <div class="text-xs uppercase tracking-[2px] text-red-400 mb-1">กรมที่ได้รับ</div>
+                        <div id="dept-result-content"></div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="mt-8 text-center text-xs text-zinc-400">
+            ทุกการหมุนได้รับ <span class="font-bold text-yellow-400">+10 โทเค็นเหรียญ</span> อัตโนมัติ
+        </div>
+    </div>
+    
+    <!-- MINIGAME HUB -->
+    <div id="minigame-section" class="hidden max-w-6xl mx-auto px-6 pb-16">
+        <div class="flex items-center justify-between mb-6">
+            <button onclick="showSection('main-hub')" class="flex items-center gap-x-2 text-sm px-4 py-2 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-green-900">
+                <i class="fas fa-arrow-left"></i> <span>กลับหน้าหลัก</span>
+            </button>
+            <div class="text-xl font-black text-yellow-300">มินิเกม • ร้านค้า + ทุบไข่</div>
+        </div>
+        
+        <!-- Sub Tabs -->
+        <div class="flex border-b border-yellow-900 mb-6">
+            <button onclick="switchMiniTab('shop-tab')" id="mini-tab-shop"
+                    class="flex-1 py-3 font-bold border-b-2 border-yellow-400 text-yellow-300">ร้านค้า (ซื้อยศ + ตลาดผู้เล่น)</button>
+            <button onclick="switchMiniTab('egg-tab')" id="mini-tab-egg"
+                    class="flex-1 py-3 font-bold text-zinc-400 hover:text-white">ทุบไข่ลุ้นรางวัล (Secret 0.1%)</button>
+        </div>
+        
+        <!-- SHOP TAB -->
+        <div id="shop-tab">
+            <div class="mb-8">
+                <div class="flex items-center gap-x-3 mb-4">
+                    <i class="fas fa-store text-2xl text-yellow-400"></i>
+                    <div>
+                        <div class="font-black text-xl">ร้านค้าอย่างเป็นทางการ (ซื้อด้วยโทเค็น)</div>
+                        <div class="text-xs text-yellow-500">ผู้ดูแลปรับราคาได้ • ได้ไอเท็มใส่กระเป๋า</div>
+                    </div>
+                </div>
+                
+                <div id="official-shop-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Populated by JS with admin prices -->
+                </div>
+            </div>
+            
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="font-black text-xl flex items-center gap-x-2">
+                        <i class="fas fa-users text-yellow-400"></i> 
+                        <span>ตลาดผู้เล่น (Community Market)</span>
+                    </div>
+                    <button onclick="openSellModal()" class="px-5 py-2 text-sm font-bold bg-yellow-600 hover:bg-yellow-500 text-black rounded-2xl flex items-center gap-x-2">
+                        <i class="fas fa-plus"></i> <span>ลงขายไอเท็ม</span>
+                    </button>
+                </div>
+                
+                <div id="community-market" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- EGG SMASH TAB -->
+        <div id="egg-tab" class="hidden">
+            <div class="text-center mb-8">
+                <div class="text-6xl mb-2">🥚🥚🥚</div>
+                <div class="font-black text-3xl text-yellow-300">ทุบไข่ลุ้นรางวัลใหญ่</div>
+                <div class="text-yellow-400 mt-1">รีเฟรชได้ 3 ครั้งฟรี • เกินนั้นเสีย 100 โทเค็น</div>
+            </div>
+            
+            <div class="flex justify-center gap-x-8 mb-8">
+                <div onclick="smashEgg(0)" class="egg w-40 h-40 rounded-[50%] flex items-center justify-center text-7xl border-[12px] border-yellow-300 shadow-2xl egg-common" id="egg-0">🥚</div>
+                <div onclick="smashEgg(1)" class="egg w-40 h-40 rounded-[50%] flex items-center justify-center text-7xl border-[12px] border-yellow-300 shadow-2xl egg-common" id="egg-1">🥚</div>
+                <div onclick="smashEgg(2)" class="egg w-40 h-40 rounded-[50%] flex items-center justify-center text-7xl border-[12px] border-yellow-300 shadow-2xl egg-common" id="egg-2">🥚</div>
+            </div>
+            
+            <div class="text-center">
+                <button onclick="refreshEggs()" id="refresh-egg-btn"
+                        class="px-8 py-3 font-bold bg-yellow-600 hover:bg-yellow-500 text-black rounded-3xl flex items-center gap-x-2 mx-auto">
+                    <i class="fas fa-sync"></i> 
+                    <span id="refresh-text">รีเฟรชไข่ (เหลือ 3 ครั้ง)</span>
+                </button>
+                <div class="text-xs text-zinc-400 mt-2">ทุบไข่แล้วได้โทเค็นหรือไอเท็มพิเศษใส่กระเป๋า</div>
+            </div>
+            
+            <!-- Drop Rate Board -->
+            <div class="mt-10 bg-zinc-950 border border-yellow-800 rounded-3xl p-6">
+                <div class="font-bold text-yellow-400 mb-3 flex items-center gap-x-2">
+                    <i class="fas fa-chart-pie"></i> <span>บอร์ดอัตราดรอปไข่ (ค่าดัชนี)</span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                    <div class="bg-black/60 rounded-2xl p-3 border border-yellow-900">
+                        <div class="text-emerald-400 font-bold">Secret</div>
+                        <div class="text-2xl font-black">0.1%</div>
+                        <div class="text-xs">VVIP 50% • Royal 20%</div>
+                    </div>
+                    <div class="bg-black/60 rounded-2xl p-3 border border-purple-900">
+                        <div class="text-purple-400 font-bold">Mythical</div>
+                        <div class="text-2xl font-black">2.5%</div>
+                        <div class="text-xs">VIP 20% • Mythical Rank 60%</div>
+                    </div>
+                    <div class="bg-black/60 rounded-2xl p-3 border border-yellow-900">
+                        <div class="text-yellow-400 font-bold">Legendary</div>
+                        <div class="text-2xl font-black">20%</div>
+                        <div class="text-xs">VIP 10% • Token 5K-10K</div>
+                    </div>
+                    <div class="bg-black/60 rounded-2xl p-3 border border-zinc-700">
+                        <div class="text-zinc-400 font-bold">Common</div>
+                        <div class="text-2xl font-black">77.4%</div>
+                        <div class="text-xs">โทเค็น 10-500 หน่วย</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- INVENTORY MODAL -->
+    <div id="inventory-modal" onclick="if (event.target.id === 'inventory-modal') closeInventoryModal()" class="hidden fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="bg-zinc-950 border border-green-700 rounded-3xl w-full max-w-4xl max-h-[92vh] overflow-auto modal">
+            <div class="p-7">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="font-black text-2xl flex items-center gap-x-3">
+                        <i class="fas fa-briefcase text-green-400"></i> 
+                        <span>กระเป๋าของฉัน</span>
+                    </div>
+                    <button onclick="closeInventoryModal()" class="text-3xl text-zinc-400 hover:text-white">&times;</button>
+                </div>
+                
+                <!-- Token + Web Balance -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-yellow-950 border border-yellow-600 rounded-2xl p-5">
+                        <div class="text-xs text-yellow-400">โทเค็นเหรียญ (ในเกม)</div>
+                        <div id="inv-token-balance" class="text-5xl font-black text-yellow-300 tabular-nums">0</div>
+                    </div>
+                    <div class="bg-emerald-950 border border-emerald-600 rounded-2xl p-5">
+                        <div class="text-xs text-emerald-400">เครดิตเว็บ (แปลงแล้ว)</div>
+                        <div id="inv-web-balance" class="text-5xl font-black text-emerald-300 tabular-nums">0</div>
+                    </div>
+                </div>
+                
+                <!-- Exchange Money Button -->
+                <button onclick="openExchangeModal()" class="w-full mb-6 py-3 font-bold bg-gradient-to-r from-emerald-600 to-green-600 rounded-2xl flex items-center justify-center gap-x-2">
+                    <i class="fas fa-exchange-alt"></i> 
+                    <span>แปลงเงินในเกม → เครดิตเว็บ (มีระบบตรวจสอบ)</span>
+                </button>
+                
+                <!-- Owned Items -->
+                <div class="mb-4">
+                    <div class="font-bold text-green-400 mb-3">ไอเท็มที่เก็บไว้</div>
+                    <div id="inventory-items" class="grid grid-cols-2 md:grid-cols-4 gap-3 min-h-[120px]">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                
+                <!-- Trade -->
+                <div class="border-t border-green-900 pt-5">
+                    <div class="font-bold text-green-400 mb-3">โอนให้เพื่อน (Trade)</div>
+                    <div class="flex gap-x-2">
+                        <input id="trade-username" type="text" placeholder="ชื่อผู้รับ" class="flex-1 bg-black border border-green-800 rounded-2xl px-4 py-2 text-sm">
+                        <input id="trade-amount" type="number" placeholder="จำนวนโทเค็น" class="w-40 bg-black border border-green-800 rounded-2xl px-4 py-2 text-sm">
+                        <button onclick="transferTokens()" class="px-6 font-bold bg-green-700 hover:bg-green-600 rounded-2xl text-sm">โอน</button>
+                    </div>
+                    <div class="text-xs text-zinc-500 mt-1">สามารถโอนโทเค็นให้ผู้เล่นคนอื่นได้ (ต้องมีบัญชี)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Exchange Modal -->
+    <div id="exchange-modal" onclick="if (event.target.id === 'exchange-modal') closeExchangeModal()" class="hidden fixed inset-0 bg-black/95 z-[300] flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="bg-zinc-950 border border-emerald-700 rounded-3xl w-full max-w-md p-7">
+            <div class="font-black text-xl mb-4 flex items-center gap-x-2 text-emerald-400">
+                <i class="fas fa-exchange-alt"></i> แปลงเงินในเกมเป็นเครดิตเว็บ
+            </div>
+            
+            <div class="text-sm text-zinc-400 mb-4">อัปโหลดภาพสกรีนช็อตเงินในเกม แล้วกรอกจำนวนที่ต้องการแปลง<br>ระบบจะตรวจสอบความถูกต้อง</div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-emerald-400 block mb-1.5">จำนวนเงินในเกมที่อ้าง (โทเค็น)</label>
+                    <input id="exchange-amount" type="number" placeholder="เช่น 100000" class="w-full bg-black border border-emerald-700 focus:border-emerald-400 rounded-2xl px-5 py-3 text-white outline-none">
+                </div>
+                
+                <div>
+                    <label class="text-xs font-bold text-emerald-400 block mb-1.5">อัปโหลดภาพหลักฐาน (Screenshot)</label>
+                    <input id="exchange-screenshot" type="file" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-2xl file:border-0 file:bg-emerald-700 file:text-white">
+                    <div id="exchange-preview" class="mt-2 hidden">
+                        <img id="exchange-preview-img" class="max-h-40 rounded-2xl border border-emerald-800">
+                    </div>
+                </div>
+                
+                <button onclick="processExchange()" class="w-full py-4 font-black bg-emerald-600 hover:bg-emerald-500 rounded-3xl">ตรวจสอบและแปลง</button>
+            </div>
+            
+            <div class="text-center text-xs text-red-400 mt-4">⚠️ การอ้างจำนวนเกินจริงจะถูกหักเงินเว็บ 50 หน่วย + บันทึกการโกง</div>
+        </div>
+    </div>
+    
+    <!-- Sell Item Modal -->
+    <div id="sell-modal" onclick="if (event.target.id === 'sell-modal') closeSellModal()" class="hidden fixed inset-0 bg-black/90 z-[250] flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="bg-zinc-950 border border-yellow-700 rounded-3xl w-full max-w-md p-7">
+            <div class="font-black text-xl mb-4">ลงขายไอเท็มในตลาดผู้เล่น</div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-yellow-400 block mb-1">ชื่อไอเท็ม</label>
+                    <input id="sell-name" type="text" placeholder="เช่น ตั๋วยศพันเอก" class="w-full bg-black border border-yellow-700 rounded-2xl px-4 py-2">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-yellow-400 block mb-1">คำอธิบาย</label>
+                    <input id="sell-desc" type="text" placeholder="ไอเท็มหายาก" class="w-full bg-black border border-yellow-700 rounded-2xl px-4 py-2">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-yellow-400 block mb-1">ราคา (โทเค็น)</label>
+                    <input id="sell-price" type="number" placeholder="5000" class="w-full bg-black border border-yellow-700 rounded-2xl px-4 py-2">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-yellow-400 block mb-1">อัปโหลดรูปภาพ (ถ้ามี)</label>
+                    <input id="sell-image" type="file" accept="image/*" class="text-sm">
+                </div>
+                
+                <button onclick="createListing()" class="w-full py-3 font-bold bg-yellow-600 hover:bg-yellow-500 text-black rounded-2xl">ลงขาย</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dev Modal (Enhanced) -->
+    <div id="dev-modal" onclick="if (event.target.id === 'dev-modal') closeDevModal()" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="bg-zinc-950 border border-green-700 rounded-3xl w-full max-w-5xl modal max-h-[92vh] overflow-auto">
+            
+            <div id="dev-login-view">
+                <div class="p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <div class="font-black text-2xl flex items-center gap-x-2">
+                                <i class="fas fa-shield-alt text-green-400"></i> 
+                                <span>เมนูผู้ดูแลระบบ (Dev)</span>
+                            </div>
+                            <div class="text-xs text-green-500 mt-1">กรอกรหัสผ่านเพื่อเข้าสู่ระบบ</div>
+                        </div>
+                        <button onclick="closeDevModal()" class="text-2xl">&times;</button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-xs font-bold text-green-400 block mb-1.5">รหัสผ่านผู้ดูแล</label>
+                            <input id="dev-password" type="password" placeholder="กรอกรหัสผ่านที่นี่" class="w-full bg-black border border-green-800 focus:border-green-500 rounded-2xl px-5 py-3 text-white outline-none">
+                        </div>
+                        <button onclick="loginDev()" class="w-full py-3.5 font-bold bg-green-600 hover:bg-green-500 transition-colors rounded-2xl">เข้าสู่ระบบผู้ดูแล</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dev-panel-view" class="hidden p-7">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <div class="font-black text-xl">แผงควบคุมผู้ดูแล</div>
+                        <div class="text-[10px] text-emerald-400">ยอดเข้าชม: <span id="dev-visits-count" class="font-mono font-bold"></span></div>
+                    </div>
+                    <button onclick="logoutDev()" class="text-xs px-4 py-1 bg-zinc-800 hover:bg-zinc-700 rounded-2xl">ออกจากระบบ</button>
+                </div>
+
+                <!-- Tabs for Dev -->
+                <div class="flex border-b border-green-900 mb-4 text-sm">
+                    <button onclick="switchDevTab('users-tab')" id="dev-tab-users" class="px-4 py-2 font-bold border-b-2 border-green-400 text-green-300">ผู้ใช้</button>
+                    <button onclick="switchDevTab('depts-tab')" id="dev-tab-depts" class="px-4 py-2 font-bold text-zinc-400">เปิด/ปิดกรม</button>
+                    <button onclick="switchDevTab('logs-tab')" id="dev-tab-logs" class="px-4 py-2 font-bold text-zinc-400">Global Logs</button>
+                    <button onclick="switchDevTab('shop-tab')" id="dev-tab-shop" class="px-4 py-2 font-bold text-zinc-400">ราคาร้านค้า</button>
+                </div>
+                
+                <!-- Users Tab -->
+                <div id="dev-users-tab">
+                    <div class="mb-6">
+                        <div class="text-xs font-bold text-green-400 mb-2 flex justify-between">
+                            <span>ผู้ใช้ทั้งหมด</span>
+                            <span id="user-count" class="px-2 py-px bg-green-950 rounded text-green-400 text-xs"></span>
+                        </div>
+                        <div id="users-list" class="max-h-[220px] overflow-auto pr-1 text-sm space-y-2 custom-scroll"></div>
+                    </div>
+                </div>
+                
+                <!-- Depts Toggle -->
+                <div id="dev-depts-tab" class="hidden">
+                    <div class="text-xs font-bold text-yellow-400 mb-3">เปิด/ปิด การสอบของแต่ละกรม</div>
+                    <div id="dept-toggle-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+                
+                <!-- Global Logs -->
+                <div id="dev-logs-tab" class="hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-xs font-bold text-yellow-400">บันทึกกิจกรรมทั้งหมด (ทุกผู้ใช้)</div>
+                        <div class="flex gap-x-2">
+                            <input id="log-filter" onkeyup="filterLogs()" placeholder="ค้นหา..." class="bg-black border border-yellow-700 text-xs rounded-xl px-3 py-1 w-48">
+                            <button onclick="clearLogs()" class="px-3 py-1 text-xs bg-red-900 hover:bg-red-800 rounded-xl">ล้าง Logs</button>
+                        </div>
+                    </div>
+                    <div id="logs-list" class="max-h-[280px] overflow-auto text-xs border border-yellow-900 rounded-2xl p-3 bg-black/40 font-mono space-y-1"></div>
+                </div>
+                
+                <!-- Shop Prices -->
+                <div id="dev-shop-tab" class="hidden">
+                    <div class="text-xs font-bold text-yellow-400 mb-3">ปรับราคาซื้อยศด้วยโทเค็น (Official Shop)</div>
+                    <div id="dev-shop-prices" class="space-y-2"></div>
+                    <button onclick="saveShopPrices()" class="mt-3 w-full py-2 text-sm font-bold bg-yellow-600 hover:bg-yellow-500 text-black rounded-2xl">บันทึกราคา</button>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mt-6 pt-5 border-t border-green-900">
+                    <button onclick="clearAllData()" class="py-2.5 text-xs font-bold bg-red-950 hover:bg-red-900 text-red-400 border border-red-900 rounded-2xl">ล้างข้อมูลทั้งหมด</button>
+                    <button onclick="exportAllData()" class="py-2.5 text-xs font-bold bg-zinc-800 hover:bg-zinc-700 border border-green-900 rounded-2xl">Export ข้อมูล + Logs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="border-t border-green-900 py-8 text-center text-xs text-green-600 relative z-10">
+        <div>พัฒนาโดย <span class="font-bold text-green-400">sorawit0023</span> • RTA Unified 2026 • รวมทุกระบบในไฟล์เดียว</div>
+    </footer>
+    
+    <script>
+        // ==================== TAILWIND + SNOW ====================
+        function initTailwind() {
+            // Already using CDN
+        }
+        
+        let snowCanvas, snowCtx, snowflakes = [];
+        function initSnow() {
+            snowCanvas = document.getElementById('snow-canvas');
+            snowCtx = snowCanvas.getContext('2d');
+            function resize() { snowCanvas.width = window.innerWidth; snowCanvas.height = window.innerHeight; }
+            window.addEventListener('resize', resize); resize();
+            
+            snowflakes = [];
+            for (let i = 0; i < 80; i++) {
+                snowflakes.push({ x: Math.random() * snowCanvas.width, y: Math.random() * snowCanvas.height, size: Math.random() * 3.2 + 1.8, speed: Math.random() * 1.1 + 0.7, opacity: Math.random() * 0.55 + 0.35, wind: Math.random() * 0.5 - 0.25 });
+            }
+            
+            function draw() {
+                snowCtx.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
+                snowCtx.fillStyle = '#fff'; snowCtx.shadowBlur = 4; snowCtx.shadowColor = '#a3e635';
+                for (let f of snowflakes) {
+                    snowCtx.globalAlpha = f.opacity;
+                    snowCtx.beginPath(); snowCtx.arc(f.x, f.y, f.size, 0, Math.PI * 2); snowCtx.fill();
+                    f.y += f.speed; f.x += f.wind;
+                    if (f.y > snowCanvas.height) { f.y = -4; f.x = Math.random() * snowCanvas.width; }
+                    if (f.x > snowCanvas.width) f.x = 0; if (f.x < 0) f.x = snowCanvas.width;
+                }
+                snowCtx.shadowBlur = 0; snowCtx.globalAlpha = 1;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        
+        // ==================== DATA ====================
+        const ranks = [
+            { name: "พลตรี", weight: 0.5, rarity: "mythical" },
+            { name: "พันเอกพิเศษ", weight: 1, rarity: "mythical" },
+            { name: "พันเอก", weight: 2, rarity: "super_rare" },
+            { name: "พันโท", weight: 3, rarity: "super_rare" },
+            { name: "พันตรี", weight: 5, rarity: "super_rare" },
+            { name: "ร้อยเอก", weight: 7, rarity: "legendary" },
+            { name: "ร้อยโท", weight: 10, rarity: "legendary" },
+            { name: "ร้อยตรี", weight: 12, rarity: "legendary" },
+            { name: "จ่าสิบเอกพิเศษ", weight: 15, rarity: "rare" },
+            { name: "จ่าสิบเอก", weight: 17, rarity: "rare" },
+            { name: "จ่าสิบโท", weight: 20, rarity: "rare" },
+            { name: "จ่าสิบตรี", weight: 23, rarity: "rare" },
+            { name: "สิบเอก", weight: 25, rarity: "common" }
+        ];
+        
+        const depts = [
+            { name: "กรมรบพิเศษทางเรือ (ซีล)", weight: 0.5, rarity: "mythical" },
+            { name: "กรมรบพิเศษที่ 3", weight: 1, rarity: "super_rare" },
+            { name: "นาวิกโยธิน", weight: 1.5, rarity: "super_rare" },
+            { name: "กรมยุทธ", weight: 2, rarity: "legendary" },
+            { name: "กรมทหารพราน 47", weight: 2.5, rarity: "legendary" },
+            { name: "ทหารมหาดเล็ก", weight: 5, rarity: "legendary" },
+            { name: "ทหารม้า", weight: 10, rarity: "legendary" },
+            { name: "กรมสารวัตร", weight: 20, rarity: "common" },
+            { name: "กรมการแพทย์", weight: 40, rarity: "common" }
+        ];
+        
+        const departments = [
+            { id: "yutthasuksa", name: "กรมยุทธศึกษาทหารบก (ครูฝึก)", color: "bg-yellow-300 text-yellow-900 border-yellow-400", icon: "📚" },
+            { id: "kongsong", name: "กองบัญชาการ", color: "bg-yellow-600 text-white border-yellow-500", icon: "🏛️" },
+            { id: "sarawat", name: "สารวัตรทหารบก (สห.ทบ.)", color: "bg-blue-600 text-white border-blue-500", icon: "🚨" },
+            { id: "thahanma", name: "ทหารม้า (รักษาพระองค์)", color: "bg-cyan-500 text-white border-cyan-400", icon: "🐎" },
+            { id: "mahadlek", name: "ทหารมหาดเล็กราชวัลลภ", color: "bg-pink-500 text-white border-pink-400", icon: "👑" },
+            { id: "phaet", name: "การแพทย์ทหาร", color: "bg-green-600 text-white border-green-500", icon: "🏥" },
+            { id: "seal", name: "สงครามทางเรือ (ซีล)", color: "bg-blue-900 text-white border-blue-700", icon: "🌊" },
+            { id: "navikayothin", name: "นาวิกโยธิน", color: "bg-red-600 text-white border-red-500", icon: "⚓" },
+            { id: "thahanphran", name: "ทหารพราน", color: "bg-zinc-500 text-white border-zinc-400", icon: "🌲" }
+        ];
+        
+        function getQuestionsForDept(deptId) {
+            return [
+                {scenario: "สถานการณ์กรม " + deptId, q: "มีทหารใหม่ 40 นาย ลาป่วย 3 นาย ส่งไปช่วยงานอีก 5 นาย เหลือกี่นาย?", ans: 32},
+                {scenario: "สถานการณ์กรม " + deptId, q: "มีวิทยุ 50 เครื่อง แจก 15 + 20 เครื่อง เหลือกี่เครื่อง?", ans: 15},
+                {scenario: "สถานการณ์กรม " + deptId, q: "มีรถ 12 คัน แบ่งขบวนละ 4 คัน ได้กี่ขบวน?", ans: 3},
+                {scenario: "สถานการณ์กรม " + deptId, q: "น้ำมันเหลือ 50 ลิตร เติม 150 ลิตร ใช้ไป 80 ลิตร เหลือกี่ลิตร?", ans: 120},
+                {scenario: "สถานการณ์กรม " + deptId, q: "มีจุดตรวจ 6 จุด จุดละ 3 นาย ใช้กำลังพลกี่นาย?", ans: 18},
+                {scenario: "สถานการณ์กรม " + deptId, q: "กล่องยา 30 กล่อง แบ่ง 3 หมวด เท่าๆ กัน หมวดละกี่กล่อง?", ans: 10},
+                {scenario: "สถานการณ์กรม " + deptId, q: "แพยาง 1 ลำ บรรทุกได้ 8 นาย มี 24 นาย ต้องใช้กี่ลำ?", ans: 3},
+                {scenario: "สถานการณ์กรม " + deptId, q: "เบิกกระสุน 90 นัด ยิงไป 30 นัด ส่งต่อ 15 นัด เหลือกี่นัด?", ans: 45},
+                {scenario: "สถานการณ์กรม " + deptId, q: "ปลากระป๋อง 18 กระป๋อง กินวันละ 4 กระป๋อง 2 วัน เหลือกี่กระป๋อง?", ans: 10},
+                {scenario: "สถานการณ์กรม " + deptId, q: "กระสุนปืนใหญ่ 180 นัด ใช้ 35 + 48 นัด เหลือกี่นัด?", ans: 97},
+                {scenario: "สถานการณ์กรม " + deptId, q: "ทหาร 85 นาย แบ่ง 5 หมวด เท่าๆ กัน หมวดละกี่นาย?", ans: 17},
+                {scenario: "สถานการณ์กรม " + deptId, q: "เดินทาง 12 กม. ใช้เวลา 4 ชม. ความเร็วเฉลี่ยกี่กม./ชม.?", ans: 3},
+                {scenario: "สถานการณ์กรม " + deptId, q: "เงินเดือน 25,000 หัก 3,500 เหลือเท่าไหร่?", ans: 21500},
+                {scenario: "สถานการณ์กรม " + deptId, q: "ข้าว 120 กระสอบ แบ่ง 8 หน่วย เท่าๆ กัน หน่วยละกี่กระสอบ?", ans: 15},
+                {scenario: "สถานการณ์กรม " + deptId, q: "เชื้อเพลิงเหลือ 950 ลิตร ใช้ไป 275 ลิตร เหลือกี่ลิตร?", ans: 675},
+                {scenario: "สถานการณ์กรม " + deptId, q: "นักโทษ 45 คน แบ่ง 9 ห้อง เท่าๆ กัน ห้องละกี่คน?", ans: 5},
+                {scenario: "สถานการณ์กรม " + deptId, q: "สายเคเบิล 360 เมตร วาง 8 วัน เท่าๆ กัน วันละกี่เมตร?", ans: 45},
+                {scenario: "สถานการณ์กรม " + deptId, q: "สะพานยาว 45 เมตร ใช้ไม้ท่อนละ 5 เมตร ต้องใช้กี่ท่อน?", ans: 9},
+                {scenario: "สถานการณ์กรม " + deptId, q: "ผู้ป่วย 72 คน จัด 6 เตียง เท่าๆ กัน เตียงละกี่คน?", ans: 12},
+                {scenario: "สถานการณ์กรม " + deptId, q: "แผนที่ 1:50,000 ระยะจริง 2.5 กม. ระยะบนแผนที่กี่ซม.?", ans: 5}
+            ];
+        }
+        
+        // ==================== STATE ====================
+        let currentUser = null;
+        let isSpinningRank = false;
+        let isSpinningDept = false;
+        let devLoggedIn = false;
+        let currentMiniTab = 'shop-tab';
+        let currentExamDept = null;
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let examTimer = null;
+        let currentStreak = 0;
+        let bonusPoints = 0;
+        let eggRefreshesLeft = 3;
+        let bannedUsers = [];
+        
+        // ==================== STORAGE HELPERS ====================
+        function getUsers() { return JSON.parse(localStorage.getItem('rta_unified_users') || '[]'); }
+        function saveUsers(users) { localStorage.setItem('rta_unified_users', JSON.stringify(users)); }
+        function getCurrentUserName() { return localStorage.getItem('rta_unified_current_user'); }
+        function setCurrentUserName(name) { localStorage.setItem('rta_unified_current_user', name); }
+        function clearCurrentUser() { localStorage.removeItem('rta_unified_current_user'); }
+        function getUserData(name) { return getUsers().find(u => u.name === name); }
+        function updateUserData(name, updates) {
+            const users = getUsers();
+            const idx = users.findIndex(u => u.name === name);
+            if (idx !== -1) { 
+                users[idx] = { ...users[idx], ...updates }; 
+                saveUsers(users); 
+                if (currentUser && currentUser.name === name) currentUser = users[idx];
+            }
+        }
+        
+        function getGlobalLogs() { return JSON.parse(localStorage.getItem('rta_unified_global_logs') || '[]'); }
+        function saveGlobalLogs(logs) { localStorage.setItem('rta_unified_global_logs', JSON.stringify(logs)); }
+        
+        function logActivity(user, action, detail = '') {
+            const logs = getGlobalLogs();
+            logs.unshift({
+                time: new Date().toISOString(),
+                user: user || 'SYSTEM',
+                action: action,
+                detail: detail
+            });
+            if (logs.length > 800) logs.length = 800;
+            saveGlobalLogs(logs);
+        }
+        
+        function getCodes() {
+            let codes = JSON.parse(localStorage.getItem('rta_unified_codes') || 'null');
+            if (!codes) {
+                codes = [
+                    { code: "SORAWIT0023", green: 10, red: 5, tokens: 500, expiry: null, maxUses: 999, usedCount: 0 },
+                    { code: "RTA2026", green: 5, red: 0, tokens: 200, expiry: null, maxUses: 200, usedCount: 0 },
+                    { code: "EGG100", green: 0, red: 0, tokens: 100, expiry: null, maxUses: 150, usedCount: 0 }
+                ];
+                localStorage.setItem('rta_unified_codes', JSON.stringify(codes));
+            }
+            return codes;
+        }
+        
+        function getAnnouncements() { return JSON.parse(localStorage.getItem('rta_unified_announcements') || '[]'); }
+        function saveAnnouncements(announcements) { localStorage.setItem('rta_unified_announcements', JSON.stringify(announcements)); }
+        
+        function getEnabledDepts() {
+            const saved = localStorage.getItem('rta_unified_enabled_depts');
+            if (saved) return JSON.parse(saved);
+            const defaults = {};
+            departments.forEach(d => defaults[d.id] = true);
+            return defaults;
+        }
+        function saveEnabledDepts(enabled) { localStorage.setItem('rta_unified_enabled_depts', JSON.stringify(enabled)); }
+        
+        function getShopPrices() {
+            const saved = localStorage.getItem('rta_unified_shop_prices');
+            if (saved) return JSON.parse(saved);
+            // Default prices (tokens)
+            return {
+                "พลตรี": 250000,
+                "พันเอกพิเศษ": 180000,
+                "พันเอก": 95000,
+                "ร้อยเอก": 45000,
+                "จ่าสิบเอก": 18000
+            };
+        }
+        function saveShopPrices(prices) { localStorage.setItem('rta_unified_shop_prices', JSON.stringify(prices)); }
+        
+        function getListings() { return JSON.parse(localStorage.getItem('rta_unified_listings') || '[]'); }
+        function saveListings(listings) { localStorage.setItem('rta_unified_listings', JSON.stringify(listings)); }
+        
+        function loadBannedUsers() {
+            bannedUsers = JSON.parse(localStorage.getItem('rta_unified_banned') || '[]');
+        }
+        function saveBannedUsers() {
+            localStorage.setItem('rta_unified_banned', JSON.stringify(bannedUsers));
+        }
+        function isBanned(name) {
+            return bannedUsers.includes(name.toLowerCase());
+        }
+        
+        // ==================== UI HELPERS ====================
+        function showAuthTab(tab) {
+            document.getElementById('auth-register').classList.toggle('hidden', tab !== 'register');
+            document.getElementById('auth-login').classList.toggle('hidden', tab !== 'login');
+            document.getElementById('tab-register').classList.toggle('border-b-2', tab === 'register');
+            document.getElementById('tab-register').classList.toggle('text-green-300', tab === 'register');
+            document.getElementById('tab-register').classList.toggle('text-zinc-400', tab !== 'register');
+            document.getElementById('tab-login').classList.toggle('border-b-2', tab === 'login');
+            document.getElementById('tab-login').classList.toggle('text-green-300', tab === 'login');
+            document.getElementById('tab-login').classList.toggle('text-zinc-400', tab !== 'login');
+        }
+        
+        function updateUserStatusBar() {
+            const container = document.getElementById('user-status');
+            if (!currentUser) {
+                container.innerHTML = `
+                    <button onclick="showAuthGate()" class="px-5 py-2 text-sm font-bold bg-green-600 hover:bg-green-500 rounded-2xl flex items-center gap-x-2">
+                        <i class="fas fa-user-plus"></i> <span>สร้างบัญชี / เข้าสู่ระบบ</span>
+                    </button>
+                    <button onclick="openDevModal()" class="px-4 py-2 text-xs font-bold bg-zinc-900 border border-green-900 hover:bg-zinc-800 rounded-2xl flex items-center gap-x-1.5">
+                        <i class="fas fa-shield-alt"></i> <span class="hidden md:inline">ผู้ดูแล</span>
+                    </button>`;
+            } else {
+                container.innerHTML = `
+                    <div class="flex items-center gap-x-3 bg-zinc-950 border border-green-800 rounded-3xl px-4 py-1.5 text-sm">
+                        <div class="flex items-center gap-x-2"><i class="fas fa-user-circle text-green-400"></i> <span class="font-bold">${currentUser.name}</span></div>
+                        <button onclick="logoutUser()" class="text-xs px-3 py-1 bg-zinc-800 hover:bg-red-950 text-red-400 rounded-2xl">ออก</button>
+                    </div>
+                    <button onclick="openDevModal()" class="px-3 py-2 text-xs font-bold bg-zinc-900 border border-green-900 hover:bg-zinc-800 rounded-2xl flex items-center gap-x-1">
+                        <i class="fas fa-shield-alt"></i>
+                    </button>`;
+            }
+        }
+        
+        function updateCreditsUI() {
+            if (!currentUser) return;
+            document.getElementById('credit-green').textContent = currentUser.green || 0;
+            document.getElementById('credit-red').textContent = currentUser.red || 0;
+            const tokenEl = document.getElementById('credit-token');
+            if (tokenEl) tokenEl.textContent = currentUser.tokens || 0;
+        }
+        
+        function showToast(msg, color = 'green') {
+            const bg = color === 'green' ? 'bg-emerald-600' : (color === 'yellow' ? 'bg-yellow-600 text-black' : 'bg-red-600');
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 ${bg} text-white font-bold rounded-3xl shadow-2xl flex items-center gap-x-3 z-[300]`;
+            toast.innerHTML = `<span>${msg}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.transition = 'all .3s'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 250); }, 2400);
+        }
+        
+        function showWarning(msg) {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-3 bg-red-600 text-white font-bold rounded-3xl shadow-2xl flex items-center gap-x-3 z-[300]`;
+            toast.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <span>${msg}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.transition = 'all .3s'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 250); }, 2600);
+        }
+        
+        function showSection(sectionId) {
+            // Hide all main sections
+            document.getElementById('main-hub').classList.add('hidden');
+            document.getElementById('exam-section').classList.add('hidden');
+            document.getElementById('spin-section').classList.add('hidden');
+            document.getElementById('minigame-section').classList.add('hidden');
+            
+            // Show requested
+            const target = document.getElementById(sectionId);
+            if (target) target.classList.remove('hidden');
+            
+            // Special inits
+            if (sectionId === 'exam-section') {
+                renderExamDeptGrid();
+                renderGlobalLeaderboard();
+            }
+            if (sectionId === 'spin-section') {
+                if (!document.getElementById('wheel-rank').hasChildNodes()) {
+                    buildWheelRank();
+                    buildWheelDept();
+                }
+            }
+            if (sectionId === 'minigame-section') {
+                switchMiniTab(currentMiniTab);
+                renderOfficialShop();
+                renderCommunityMarket();
+            }
+        }
+        
+        function switchMiniTab(tab) {
+            currentMiniTab = tab;
+            document.getElementById('shop-tab').classList.toggle('hidden', tab !== 'shop-tab');
+            document.getElementById('egg-tab').classList.toggle('hidden', tab !== 'egg-tab');
+            
+            document.getElementById('mini-tab-shop').classList.toggle('border-b-2', tab === 'shop-tab');
+            document.getElementById('mini-tab-shop').classList.toggle('text-yellow-300', tab === 'shop-tab');
+            document.getElementById('mini-tab-shop').classList.toggle('text-zinc-400', tab !== 'shop-tab');
+            
+            document.getElementById('mini-tab-egg').classList.toggle('border-b-2', tab === 'egg-tab');
+            document.getElementById('mini-tab-egg').classList.toggle('text-yellow-300', tab === 'egg-tab');
+            document.getElementById('mini-tab-egg').classList.toggle('text-zinc-400', tab !== 'egg-tab');
+        }
+        
+        // ==================== AUTH ====================
+        function registerUser() {
+            const name = document.getElementById('reg-name').value.trim();
+            const pass = document.getElementById('reg-pass').value.trim();
+            const pass2 = document.getElementById('reg-pass2').value.trim();
+            
+            if (!name || !pass) { alert('กรุณากรอกชื่อและรหัสผ่าน'); return; }
+            if (pass.length < 4) { alert('รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร'); return; }
+            if (pass !== pass2) { alert('รหัสผ่านไม่ตรงกัน'); return; }
+            if (isBanned(name)) { alert('ชื่อนี้ถูกแบน'); return; }
+            
+            const users = getUsers();
+            if (users.find(u => u.name.toLowerCase() === name.toLowerCase())) { alert('ชื่อนี้มีผู้ใช้แล้ว'); return; }
+            
+            const newUser = { 
+                name, 
+                pass, 
+                green: 0, 
+                red: 0, 
+                tokens: 50, 
+                web_balance: 0,
+                inventory: [],
+                created: new Date().toISOString(),
+                completedDepts: {},
+                eggRefreshesLeft: 3
+            };
+            users.push(newUser); 
+            saveUsers(users);
+            setCurrentUserName(name); 
+            currentUser = newUser;
+            
+            logActivity(name, 'REGISTER', 'สมัครบัญชีใหม่ +50 โทเค็นเริ่มต้น');
+            
+            hideAuthGate(); 
+            updateUIAfterLogin();
+            showToast('สร้างบัญชีสำเร็จ! ได้รับ 50 โทเค็นเริ่มต้น', 'green');
+        }
+        
+        function loginUser() {
+            const name = document.getElementById('login-name').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            if (isBanned(name)) { alert('บัญชีนี้ถูกแบน'); return; }
+            
+            const user = getUserData(name);
+            if (!user || user.pass !== pass) { alert('ชื่อหรือรหัสผ่านไม่ถูกต้อง'); return; }
+            
+            setCurrentUserName(name); 
+            currentUser = user;
+            logActivity(name, 'LOGIN', 'เข้าสู่ระบบ');
+            
+            hideAuthGate(); 
+            updateUIAfterLogin();
+        }
+        
+        function logoutUser() {
+            if (!confirm('ออกจากระบบ?')) return;
+            if (currentUser) logActivity(currentUser.name, 'LOGOUT', '');
+            clearCurrentUser(); 
+            currentUser = null;
+            document.getElementById('main-hub').classList.add('hidden');
+            document.getElementById('exam-section').classList.add('hidden');
+            document.getElementById('spin-section').classList.add('hidden');
+            document.getElementById('minigame-section').classList.add('hidden');
+            document.getElementById('auth-gate').classList.remove('hidden');
+            updateUserStatusBar();
+        }
+        
+        function hideAuthGate() { document.getElementById('auth-gate').classList.add('hidden'); }
+        function showAuthGate() {
+            document.getElementById('auth-gate').classList.remove('hidden');
+            document.getElementById('main-hub').classList.add('hidden');
+            document.getElementById('exam-section').classList.add('hidden');
+            document.getElementById('spin-section').classList.add('hidden');
+            document.getElementById('minigame-section').classList.add('hidden');
+        }
+        
+        function updateUIAfterLogin() {
+            document.getElementById('main-hub').classList.remove('hidden');
+            document.getElementById('welcome-text').innerHTML = `สวัสดี, <span class="text-green-300">${currentUser.name}</span>`;
+            updateCreditsUI();
+            updateUserStatusBar();
+            renderAnnouncement();
+            
+            // Seed some demo data if first time
+            if (!currentUser.inventory) currentUser.inventory = [];
+            if (currentUser.eggRefreshesLeft === undefined) currentUser.eggRefreshesLeft = 3;
+            
+            // Show hub by default
+            showSection('main-hub');
+        }
+        
+        // ==================== SPIN SYSTEM (from file 1, adapted) ====================
+        function getRarityClass(rarity) {
+            if (rarity === 'mythical') return 'mythical';
+            if (rarity === 'super_rare') return 'super_rare';
+            if (rarity === 'legendary') return 'legendary';
+            if (rarity === 'rare') return 'rare';
+            return 'common';
+        }
+        
+        function buildWheelRank() {
+            const wheel = document.getElementById('wheel-rank');
+            wheel.innerHTML = '';
+            for (let c = 0; c < 6; c++) {
+                ranks.forEach(rank => {
+                    const div = document.createElement('div');
+                    div.className = `rank-item flex-shrink-0 w-36 h-[92px] flex flex-col items-center justify-center text-center px-2 rounded-2xl border-4 cursor-default select-none ${getRarityClass(rank.rarity)}`;
+                    let badge = rank.rarity === 'mythical' ? 'MYTHICAL' : rank.rarity === 'super_rare' ? 'SUPER RARE' : rank.rarity === 'legendary' ? 'LEGENDARY' : rank.rarity === 'rare' ? 'RARE' : 'COMMON';
+                    div.innerHTML = `<div class="text-[9px] font-black tracking-[1.5px] opacity-80 mb-0.5">${badge}</div><div class="font-extrabold text-base leading-[1.05] px-1">${rank.name}</div>`;
+                    div.dataset.rankName = rank.name;
+                    wheel.appendChild(div);
+                });
+            }
+        }
+        
+        function buildWheelDept() {
+            const wheel = document.getElementById('wheel-dept');
+            wheel.innerHTML = '';
+            for (let c = 0; c < 6; c++) {
+                depts.forEach(dept => {
+                    const div = document.createElement('div');
+                    div.className = `dept-item flex-shrink-0 w-40 h-[92px] flex flex-col items-center justify-center text-center px-2 rounded-2xl border-4 cursor-default select-none ${getRarityClass(dept.rarity)}`;
+                    let badge = dept.rarity === 'mythical' ? 'MYTHICAL' : dept.rarity === 'super_rare' ? 'SUPER RARE' : dept.rarity === 'legendary' ? 'LEGENDARY' : 'COMMON';
+                    div.innerHTML = `<div class="text-[9px] font-black tracking-[1.5px] opacity-80 mb-0.5">${badge}</div><div class="font-extrabold text-sm leading-[1.1] px-1">${dept.name}</div>`;
+                    div.dataset.deptName = dept.name;
+                    wheel.appendChild(div);
+                });
+            }
+        }
+        
+        function getWeightedRandom(list) {
+            const total = list.reduce((s, i) => s + i.weight, 0);
+            let r = Math.random() * total;
+            for (let item of list) { r -= item.weight; if (r <= 0) return item; }
+            return list[list.length-1];
+        }
+        
+        async function spinRank() {
+            if (isSpinningRank) return;
+            if (!currentUser && !devLoggedIn) return;
+            if (!devLoggedIn && currentUser && (currentUser.green || 0) < 1) { 
+                showWarning('เครดิตยศ (เขียว) ไม่พอ!'); 
+                return; 
+            }
+            
+            isSpinningRank = true;
+            const btn = document.getElementById('spin-rank-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> กำลังสุ่มยศ...`;
+            
+            const wheel = document.getElementById('wheel-rank');
+            const container = document.getElementById('wheel-container-rank');
+            const items = wheel.children;
+            const itemWidth = 144;
+            const gap = 8;
+            const itemStep = itemWidth + gap;
+            const winner = getWeightedRandom(ranks);
+            
+            let targetIndex = -1;
+            for (let i = items.length - 1; i >= 0; i--) { if (items[i].dataset.rankName === winner.name) { targetIndex = i; break; } }
+            if (targetIndex === -1) targetIndex = 0;
+            
+            const containerW = container.offsetWidth;
+            const targetPos = (targetIndex * itemStep) + (itemWidth / 2) - (containerW / 2);
+            const extra = 3.5 + Math.random() * 2;
+            const cycleLen = ranks.length * itemStep;
+            const finalX = targetPos + (extra * cycleLen);
+            
+            wheel.style.transition = 'transform 4200ms cubic-bezier(0.23,1,0.32,1)';
+            wheel.style.transform = `translateX(-${finalX}px)`;
+            
+            setTimeout(() => {
+                isSpinningRank = false;
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-dice mr-2"></i> สุ่มยศ (ใช้ 1 เครดิตเขียว)`;
+                
+                if (!devLoggedIn && currentUser) {
+                    currentUser.green = (currentUser.green || 0) - 1;
+                    currentUser.tokens = (currentUser.tokens || 0) + 10;
+                    updateUserData(currentUser.name, { green: currentUser.green, tokens: currentUser.tokens });
+                }
+                updateCreditsUI();
+                showRankResult(winner);
+                if (currentUser) {
+                    addLogToGlobal('ยศ', winner.name);
+                    logActivity(currentUser.name, 'SPIN_RANK', winner.name + ' (' + winner.rarity + ') +10 tokens');
+                }
+            }, 4400);
+        }
+        
+        function showRankResult(winner) {
+            const area = document.getElementById('rank-result-area');
+            const content = document.getElementById('rank-result-content');
+            let badge = winner.rarity.toUpperCase().replace('_', ' ');
+            
+            content.innerHTML = `
+                <div class="inline-block px-8 py-5 rounded-3xl border-4 ${getRarityClass(winner.rarity)} animate-pulse">
+                    <div class="text-xs font-black tracking-[2px] opacity-80">${badge}</div>
+                    <div class="text-6xl font-black tracking-tighter mt-1">?</div>
+                </div>
+            `;
+            area.classList.remove('hidden');
+            
+            setTimeout(() => {
+                content.innerHTML = `<div class="inline-block px-7 py-4 rounded-3xl border-4 ${getRarityClass(winner.rarity)}"><div class="text-xs font-black tracking-[2px] opacity-80">${badge}</div><div class="text-3xl font-black tracking-tighter">${winner.name}</div></div>`;
+                applyRarityTheme(winner.rarity);
+                setTimeout(() => area.scrollIntoView({block:'center', behavior:'smooth'}), 200);
+            }, 1350);
+        }
+        
+        async function spinDept() {
+            if (isSpinningDept) return;
+            if (!currentUser && !devLoggedIn) return;
+            if (!devLoggedIn && currentUser && (currentUser.red || 0) < 1) { 
+                showWarning('เครดิตกรม (แดง) ไม่พอ!'); 
+                return; 
+            }
+            
+            isSpinningDept = true;
+            const btn = document.getElementById('spin-dept-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> กำลังสุ่มกรม...`;
+            
+            const wheel = document.getElementById('wheel-dept');
+            const container = document.getElementById('wheel-container-dept');
+            const items = wheel.children;
+            const itemWidth = 160;
+            const gap = 8;
+            const itemStep = itemWidth + gap;
+            const winner = getWeightedRandom(depts);
+            
+            let targetIndex = -1;
+            for (let i = items.length - 1; i >= 0; i--) { if (items[i].dataset.deptName === winner.name) { targetIndex = i; break; } }
+            if (targetIndex === -1) targetIndex = 0;
+            
+            const containerW = container.offsetWidth;
+            const targetPos = (targetIndex * itemStep) + (itemWidth / 2) - (containerW / 2);
+            const extra = 3.5 + Math.random() * 2;
+            const cycleLen = depts.length * itemStep;
+            const finalX = targetPos + (extra * cycleLen);
+            
+            wheel.style.transition = 'transform 4200ms cubic-bezier(0.23,1,0.32,1)';
+            wheel.style.transform = `translateX(-${finalX}px)`;
+            
+            setTimeout(() => {
+                isSpinningDept = false;
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-dice mr-2"></i> สุ่มกรม (ใช้ 1 เครดิตแดง)`;
+                
+                if (!devLoggedIn && currentUser) {
+                    currentUser.red = (currentUser.red || 0) - 1;
+                    currentUser.tokens = (currentUser.tokens || 0) + 10;
+                    updateUserData(currentUser.name, { red: currentUser.red, tokens: currentUser.tokens });
+                }
+                updateCreditsUI();
+                showDeptResult(winner);
+                if (currentUser) {
+                    addLogToGlobal('กรม', winner.name);
+                    logActivity(currentUser.name, 'SPIN_DEPT', winner.name + ' (' + winner.rarity + ') +10 tokens');
+                }
+            }, 4400);
+        }
+        
+        function showDeptResult(winner) {
+            const area = document.getElementById('dept-result-area');
+            const content = document.getElementById('dept-result-content');
+            let badge = winner.rarity.toUpperCase().replace('_', ' ');
+            
+            content.innerHTML = `
+                <div class="inline-block px-8 py-5 rounded-3xl border-4 ${getRarityClass(winner.rarity)} animate-pulse">
+                    <div class="text-xs font-black tracking-[2px] opacity-80">${badge}</div>
+                    <div class="text-5xl font-black tracking-tighter mt-1">?</div>
+                </div>
+            `;
+            area.classList.remove('hidden');
+            
+            setTimeout(() => {
+                content.innerHTML = `<div class="inline-block px-6 py-4 rounded-3xl border-4 ${getRarityClass(winner.rarity)}"><div class="text-xs font-black tracking-[2px] opacity-80">${badge}</div><div class="text-xl font-black leading-tight">${winner.name}</div></div>`;
+                applyRarityTheme(winner.rarity);
+            }, 1350);
+        }
+        
+        function applyRarityTheme(rarity) {
+            const main = document.getElementById('main-hub');
+            main.classList.remove('theme-mythical', 'theme-super_rare', 'theme-legendary', 'theme-rare', 'theme-common');
+            
+            let themeClass = '';
+            if (rarity === 'mythical') themeClass = 'theme-mythical';
+            else if (rarity === 'super_rare') themeClass = 'theme-super_rare';
+            else if (rarity === 'legendary') themeClass = 'theme-legendary';
+            else if (rarity === 'rare') themeClass = 'theme-rare';
+            else themeClass = 'theme-common';
+            
+            main.classList.add(themeClass);
+            setTimeout(() => main.classList.remove(themeClass), 12000);
+        }
+        
+        function addLogToGlobal(type, result) {
+            // Legacy per-user log kept minimal, main is global now
+            if (!currentUser) return;
+            // We use global logActivity instead
+        }
+        
+        // ==================== EXAM SYSTEM (adapted from file 2) ====================
+        function renderExamDeptGrid() {
+            const container = document.getElementById('exam-dept-grid');
+            container.innerHTML = '';
+            const enabled = getEnabledDepts();
+            
+            departments.forEach(dept => {
+                const isEnabled = enabled[dept.id] !== false;
+                const completed = currentUser.completedDepts && currentUser.completedDepts[dept.id];
+                
+                const card = document.createElement('div');
+                card.className = `dept-card bg-zinc-950 rounded-3xl p-5 ${isEnabled ? 'cursor-pointer border border-green-700 hover:border-green-400' : 'opacity-60 border border-red-900'}`;
+                
+                let statusHTML = '';
+                if (completed) {
+                    const info = getDeptStatusInfo(completed.score, dept.id);
+                    statusHTML = `<div class="mt-3"><span class="px-3 py-1 text-xs rounded-full font-bold ${info.cls}">${info.text}</span></div>`;
+                } else if (!isEnabled) {
+                    statusHTML = `<div class="mt-3 text-xs text-red-400">ปิดการสอบชั่วคราว</div>`;
+                }
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <div class="text-3xl mb-2">${dept.icon}</div>
+                            <div class="font-bold text-lg leading-tight">${dept.name}</div>
+                            <div class="text-xs text-green-400 mt-1">20 ข้อ • +5 โทเค็น/ข้อถูก</div>
+                        </div>
+                        <div class="text-right">
+                            ${isEnabled ? `<i class="fas fa-play text-green-400 text-xl"></i>` : `<i class="fas fa-lock text-red-400"></i>`}
+                        </div>
+                    </div>
+                    ${statusHTML}
+                `;
+                
+                if (isEnabled && !completed) {
+                    card.onclick = () => startExamForDept(dept);
+                }
+                container.appendChild(card);
+            });
+        }
+        
+        function getDeptStatusInfo(score, deptId) {
+            const isSarawat = deptId === 'sarawat';
+            const passTh = isSarawat ? 80 : 50;
+            const reserveTh = isSarawat ? 50 : 40;
+            if (score >= passTh) return { text: 'ผ่านแน่นอน', cls: 'bg-emerald-600 text-white', status: 'pass' };
+            else if (score >= reserveTh) return { text: 'รอลุ้นรอเรียก', cls: 'bg-yellow-600 text-black', status: 'reserve' };
+            else return { text: 'ไม่ผ่านตก', cls: 'bg-red-600 text-white', status: 'fail' };
+        }
+        
+        function startExamForDept(dept) {
+            if (isBanned(currentUser.name)) { alert('คุณถูกแบน'); return; }
+            currentExamDept = dept;
+            currentQuestions = getQuestionsForDept(dept.id);
+            currentQuestionIndex = 0;
+            userAnswers = new Array(currentQuestions.length).fill(null);
+            currentStreak = 0;
+            bonusPoints = 0;
+            
+            document.getElementById('exam-section').classList.add('hidden');
+            // Create dynamic exam UI
+            showDynamicExamUI();
+        }
+        
+        function showDynamicExamUI() {
+            // Remove old if exists
+            const old = document.getElementById('dynamic-exam-area');
+            if (old) old.remove();
+            
+            const examHTML = `
+                <div id="dynamic-exam-area" class="max-w-4xl mx-auto px-6 pb-16">
+                    <div class="bg-zinc-950 border border-green-700 rounded-3xl overflow-hidden">
+                        <div class="bg-black/70 px-6 py-4 flex items-center justify-between border-b border-green-800">
+                            <div>
+                                <div id="exam-dept-name" class="text-xl font-black">${currentExamDept.icon} ${currentExamDept.name}</div>
+                                <div id="exam-progress" class="text-xs text-green-400 mt-0.5"></div>
+                            </div>
+                            <div class="flex items-center gap-x-4">
+                                <div class="text-right">
+                                    <div class="text-xs text-zinc-400">เวลาที่เหลือ</div>
+                                    <div id="exam-timer" class="text-3xl font-black text-green-400 tabular-nums">20:00</div>
+                                </div>
+                                <button onclick="confirmExitExam()" class="px-4 py-2 text-xs bg-red-950 hover:bg-red-900 text-red-400 rounded-2xl border border-red-900">ออก</button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-8">
+                            <div id="question-dept-badge" class="inline-block px-5 py-1.5 text-sm font-black tracking-wider rounded-2xl dept-badge mb-3 ${currentExamDept.color}">${currentExamDept.name}</div>
+                            <div id="question-scenario" class="text-xl font-bold text-green-300 mb-1"></div>
+                            <div id="question-text" class="text-2xl leading-tight font-medium mb-8"></div>
+                            
+                            <div class="max-w-md">
+                                <label class="text-xs font-bold text-green-400 block mb-2">คำตอบของคุณ</label>
+                                <input id="answer-input" type="number" class="w-full bg-black border-2 border-green-700 focus:border-green-400 rounded-2xl px-6 py-4 text-4xl font-black text-center outline-none" placeholder="0">
+                                
+                                <button onclick="submitAnswerAndNext()" id="next-btn"
+                                        class="mt-4 w-full py-4 font-black text-lg bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 rounded-3xl flex items-center justify-center gap-x-2">
+                                    <span id="next-btn-text">ยืนยันคำตอบและไปข้อถัดไป</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('exam-section').insertAdjacentHTML('afterend', examHTML);
+            startExamTimer();
+            showCurrentQuestion();
+        }
+        
+        function showCurrentQuestion() {
+            const q = currentQuestions[currentQuestionIndex];
+            document.getElementById('exam-progress').textContent = `ข้อที่ ${currentQuestionIndex + 1} / 20 • โบนัสสะสม: +${bonusPoints}`;
+            document.getElementById('question-scenario').textContent = q.scenario;
+            document.getElementById('question-text').textContent = q.q;
+            const input = document.getElementById('answer-input');
+            input.value = userAnswers[currentQuestionIndex] || '';
+            input.focus();
+            
+            const nextBtn = document.getElementById('next-btn');
+            const nextText = document.getElementById('next-btn-text');
+            if (currentQuestionIndex === currentQuestions.length - 1) {
+                nextText.textContent = 'ส่งข้อสอบ';
+            } else {
+                nextText.textContent = 'ยืนยันคำตอบและไปข้อถัดไป';
+            }
+        }
+        
+        function submitAnswerAndNext() {
+            const valStr = document.getElementById('answer-input').value.trim();
+            const val = parseInt(valStr);
+            if (isNaN(val)) { alert('กรุณากรอกคำตอบเป็นตัวเลข'); return; }
+            
+            userAnswers[currentQuestionIndex] = val;
+            const q = currentQuestions[currentQuestionIndex];
+            const isCorrect = val === q.ans;
+            
+            if (isCorrect) {
+                currentStreak++;
+                if (currentStreak === 10) {
+                    bonusPoints += 20;
+                    showBonusToast();
+                    currentStreak = 0;
+                }
+            } else {
+                currentStreak = 0;
+            }
+            
+            logActivity(currentUser.name, isCorrect ? 'EXAM_CORRECT' : 'EXAM_WRONG', `Q${currentQuestionIndex+1} ${currentExamDept.id}`);
+            
+            showQuestionFeedback(isCorrect, q.ans);
+        }
+        
+        function showBonusToast() {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-6 left-1/2 -translate-x-1/2 z-[700] bonus-toast bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-black text-xl px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-x-3 border-4 border-yellow-300`;
+            toast.innerHTML = `<div>🎉 โบนัส! +20 คะแนน (ตอบถูก 10 ข้อติด)</div>`;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.transition = 'all 0.4s'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 2600);
+        }
+        
+        function showQuestionFeedback(isCorrect, correctAnswer) {
+            const feedback = document.createElement('div');
+            feedback.className = `fixed inset-0 bg-black/90 flex items-center justify-center z-[300] p-6`;
+            
+            let html = '';
+            if (isCorrect) {
+                html = `
+                    <div class="bg-zinc-950 border-2 border-emerald-600 rounded-3xl p-8 max-w-lg w-full text-center">
+                        <div class="text-7xl mb-4">✅</div>
+                        <div class="text-4xl font-black text-emerald-400 mb-4">คุณตอบถูก!</div>
+                        <div class="bg-emerald-950/40 border border-emerald-800 rounded-2xl p-6 text-left mb-6">
+                            <p class="font-bold text-emerald-300">ยอดเยี่ยมครับ! 🎖️</p>
+                            <p class="text-sm text-zinc-200 leading-relaxed">การวิเคราะห์สถานการณ์และคำนวณได้แม่นยำ แสดงถึงความพร้อมในการเป็นทหารที่ดี เก่งมากครับ!</p>
+                        </div>
+                        <button onclick="proceedToNextQuestion(this)" class="w-full py-4 text-lg font-bold bg-emerald-600 hover:bg-emerald-500 rounded-2xl">ขอบคุณครับ ไปข้อต่อไป →</button>
+                    </div>
+                `;
+            } else {
+                html = `
+                    <div class="bg-zinc-950 border-2 border-red-600 rounded-3xl p-8 max-w-lg w-full text-center">
+                        <div class="text-7xl mb-4">❌</div>
+                        <div class="text-4xl font-black text-red-400 mb-2">คุณตอบผิด!</div>
+                        <div class="text-2xl text-white mb-4">คำตอบที่ถูกคือ <span class="font-black text-yellow-400">${correctAnswer}</span></div>
+                        <div class="bg-red-950/40 border border-red-900 rounded-2xl p-6 text-left mb-6">
+                            <p class="font-bold text-red-300 mb-3">ไม่เป็นไรเลยครับ 💪</p>
+                            <p class="text-sm text-zinc-200 leading-relaxed">ทุกคนตอบผิดได้ การสอบนี้เป็นการทดสอบความรู้และสมาธิ ครั้งหน้าคุณจะทำได้ดีขึ้นแน่นอน</p>
+                        </div>
+                        <button onclick="proceedToNextQuestion(this)" class="w-full py-4 text-lg font-bold bg-red-600 hover:bg-red-500 rounded-2xl">เข้าใจครับ ไปข้อต่อไป</button>
+                    </div>
+                `;
+            }
+            feedback.innerHTML = html;
+            document.body.appendChild(feedback);
+        }
+        
+        function proceedToNextQuestion(element) {
+            element.closest('.fixed').remove();
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                showCurrentQuestion();
+            } else {
+                finishExam();
+            }
+        }
+        
+        function startExamTimer() {
+            let timeLeft = 1200;
+            const timerEl = document.getElementById('exam-timer');
+            if (examTimer) clearInterval(examTimer);
+            
+            examTimer = setInterval(() => {
+                timeLeft--;
+                const min = Math.floor(timeLeft / 60);
+                const sec = timeLeft % 60;
+                if (timerEl) timerEl.textContent = `${min}:${sec.toString().padStart(2,'0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(examTimer);
+                    finishExam(true);
+                }
+            }, 1000);
+        }
+        
+        function finishExam(timeUp = false) {
+            if (examTimer) clearInterval(examTimer);
+            
+            let correct = 0;
+            currentQuestions.forEach((q, i) => {
+                if (userAnswers[i] === q.ans) correct++;
+            });
+            
+            const baseScore = correct * 5;
+            let totalScore = baseScore + bonusPoints;
+            if (totalScore > 100) totalScore = 100;
+            
+            const tokensEarned = correct * 5;
+            currentUser.tokens = (currentUser.tokens || 0) + tokensEarned;
+            
+            logActivity(currentUser.name, 'FINISH_EXAM', `${currentExamDept.id} | ${correct}/20 | Score ${totalScore} | +${tokensEarned} tokens`);
+            
+            // Save result
+            if (!currentUser.completedDepts) currentUser.completedDepts = {};
+            currentUser.completedDepts[currentExamDept.id] = {
+                score: totalScore,
+                date: new Date().toISOString(),
+                bonus: bonusPoints,
+                correctCount: correct,
+                tokensEarned: tokensEarned
+            };
+            
+            updateUserData(currentUser.name, { 
+                tokens: currentUser.tokens, 
+                completedDepts: currentUser.completedDepts 
+            });
+            
+            // Remove dynamic exam
+            const dyn = document.getElementById('dynamic-exam-area');
+            if (dyn) dyn.remove();
+            
+            document.getElementById('exam-section').classList.remove('hidden');
+            
+            updateCreditsUI();
+            renderExamDeptGrid();
+            renderGlobalLeaderboard();
+            
+            // Show result + reflex mini-game
+            showFinalResultModal(totalScore, bonusPoints, correct, tokensEarned);
+        }
+        
+        function showFinalResultModal(score, bonus = 0, correctCount = 0, tokensEarned = 0) {
+            // Simplified result modal (full version would include reflex game as in original file2)
+            const modal = document.createElement('div');
+            modal.className = `fixed inset-0 bg-black/95 flex items-center justify-center z-[400] p-6`;
+            
+            const isSarawat = currentExamDept && currentExamDept.id === 'sarawat';
+            const passTh = isSarawat ? 80 : 50;
+            
+            let statusText = score >= passTh ? 'ผ่านแน่นอน!' : (score >= 40 ? 'รอลุ้นรอเรียก' : 'ไม่ผ่านตก');
+            let statusColor = score >= passTh ? 'emerald' : (score >= 40 ? 'yellow' : 'red');
+            
+            modal.innerHTML = `
+                <div class="bg-zinc-950 border border-${statusColor}-600 rounded-3xl max-w-lg w-full p-8 text-center">
+                    <div class="text-7xl mb-4">${score >= passTh ? '🎖️' : '💪'}</div>
+                    <div class="text-4xl font-black text-${statusColor}-400 mb-1">${statusText}</div>
+                    <div class="text-5xl font-black text-white mb-1">${score} <span class="text-2xl text-zinc-400">/ 100</span></div>
+                    <div class="text-sm text-zinc-400 mb-4">ถูก ${correctCount} ข้อ • ได้รับ +${tokensEarned} โทเค็น</div>
+                    
+                    <div class="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-left text-sm leading-relaxed my-6">
+                        ${score >= passTh ? 
+                            `ยินดีด้วยครับ! คุณผ่านเกณฑ์ด้วยคะแนน ${score} แสดงถึงความพร้อมสูง แคปหน้าจอส่งให้ <span class="font-bold text-yellow-400">sorawit0023</span> เพื่อรับการฝึกต่อไป` : 
+                            `ไม่เป็นไรครับ ความพยายามของคุณมีค่า ครั้งหน้าจะดีขึ้นแน่นอน สู้ๆ นะครับ`}
+                    </div>
+                    
+                    <button onclick="this.closest('.fixed').remove(); renderExamDeptGrid(); renderGlobalLeaderboard();" 
+                            class="w-full py-4 text-lg font-bold bg-zinc-700 hover:bg-zinc-600 rounded-2xl">
+                        กลับไปเลือกกรม
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        function confirmExitExam() {
+            if (confirm('ออกจากการสอบ? คะแนนจะไม่ถูกบันทึก')) {
+                if (examTimer) clearInterval(examTimer);
+                const dyn = document.getElementById('dynamic-exam-area');
+                if (dyn) dyn.remove();
+                document.getElementById('exam-section').classList.remove('hidden');
+                logActivity(currentUser.name, 'EXIT_EXAM_EARLY', currentExamDept ? currentExamDept.id : '');
+            }
+        }
+        
+        function renderGlobalLeaderboard() {
+            const tbody = document.getElementById('leaderboard-body');
+            if (!tbody) return;
+            
+            let users = getUsers();
+            let records = [];
+            
+            users.forEach(user => {
+                if (user.completedDepts) {
+                    Object.keys(user.completedDepts).forEach(deptId => {
+                        const deptInfo = departments.find(d => d.id === deptId);
+                        const data = user.completedDepts[deptId];
+                        records.push({
+                            name: user.name,
+                            deptId: deptId,
+                            deptName: deptInfo ? deptInfo.name : deptId,
+                            score: data.score || 0,
+                            date: data.date
+                        });
+                    });
+                }
+            });
+            
+            records.sort((a, b) => b.score - a.score);
+            tbody.innerHTML = '';
+            
+            const headerAdmin = document.getElementById('admin-actions-header-exam');
+            if (headerAdmin) headerAdmin.style.display = devLoggedIn ? '' : 'none';
+            
+            if (records.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${devLoggedIn ? 6 : 5}" class="px-4 py-8 text-center text-zinc-500">ยังไม่มีผู้สอบ</td></tr>`;
+                return;
+            }
+            
+            records.forEach((rec, index) => {
+                const rank = index + 1;
+                const info = getDeptStatusInfo(rec.score, rec.deptId);
+                
+                const adminMenu = devLoggedIn ? 
+                    `<td class="px-2 py-3 text-center">
+                        <button onclick="event.stopImmediatePropagation(); showAdminMenu('${rec.name}', '${rec.deptId}')" class="text-xl px-2 py-1 text-green-400 hover:text-emerald-300">•••</button>
+                     </td>` : '';
+                
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-green-950/30';
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-mono font-bold">#${rank}</td>
+                    <td class="px-4 py-3 font-medium">${rec.name}</td>
+                    <td class="px-4 py-3 text-sm">${rec.deptName}</td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="font-black text-2xl tabular-nums">${rec.score}</div>
+                        <div class="text-[10px] text-zinc-500">/ 100</div>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="px-3 py-1 text-xs rounded-full font-bold ${info.cls}">${info.text}</span>
+                    </td>
+                    ${adminMenu}
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        function showAdminMenu(userName, deptId) {
+            if (!devLoggedIn) return;
+            // Similar to original file2 admin menu for score adjust
+            const modal = document.createElement('div');
+            modal.className = `fixed inset-0 bg-black/80 flex items-center justify-center z-[600] p-4`;
+            modal.innerHTML = `
+                <div onclick="event.target.remove()" class="absolute inset-0"></div>
+                <div onclick="event.stopImmediatePropagation()" class="bg-zinc-950 border border-green-700 rounded-3xl p-6 w-full max-w-xs">
+                    <div class="font-black text-lg mb-1">จัดการผู้ใช้</div>
+                    <div class="text-sm text-green-400 mb-4">${userName} • ${departments.find(d=>d.id===deptId)?.name || deptId}</div>
+                    
+                    <div class="space-y-2">
+                        <button onclick="adminAdjustScore('${userName}', '${deptId}', 10); this.closest('.fixed').remove();" class="w-full py-3 text-sm font-bold bg-emerald-700 hover:bg-emerald-600 rounded-2xl">+10 คะแนน</button>
+                        <button onclick="adminAdjustScore('${userName}', '${deptId}', -10); this.closest('.fixed').remove();" class="w-full py-3 text-sm font-bold bg-red-700 hover:bg-red-600 rounded-2xl">-10 คะแนน</button>
+                        <button onclick="adminBanUser('${userName}'); this.closest('.fixed').remove();" class="w-full py-3 text-sm font-bold bg-red-900 hover:bg-red-800 rounded-2xl">แบนผู้ใช้</button>
+                    </div>
+                    <button onclick="this.closest('.fixed').remove()" class="mt-4 w-full py-2 text-xs text-zinc-400">ปิด</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        function adminAdjustScore(userName, deptId, delta) {
+            let users = getUsers();
+            const idx = users.findIndex(u => u.name === userName);
+            if (idx === -1) return;
+            if (!users[idx].completedDepts) users[idx].completedDepts = {};
+            if (!users[idx].completedDepts[deptId]) users[idx].completedDepts[deptId] = {score: 0, date: new Date().toISOString()};
+            
+            const old = users[idx].completedDepts[deptId].score || 0;
+            users[idx].completedDepts[deptId].score = Math.max(0, Math.min(120, old + delta));
+            saveUsers(users);
+            logActivity('ADMIN', 'ADMIN_ADJUST_SCORE', `${userName} ${deptId} ${delta}`);
+            renderGlobalLeaderboard();
+        }
+        
+        function adminBanUser(userName) {
+            if (!confirm(`แบน ${userName}?`)) return;
+            if (!bannedUsers.includes(userName.toLowerCase())) {
+                bannedUsers.push(userName.toLowerCase());
+                saveBannedUsers();
+            }
+            logActivity('ADMIN', 'BAN_USER', userName);
+            alert(`${userName} ถูกแบนแล้ว`);
+            renderGlobalLeaderboard();
+        }
+        
+        // ==================== EGG GAME ====================
+        function smashEgg(eggIndex) {
+            const eggEl = document.getElementById(`egg-${eggIndex}`);
+            if (!eggEl || eggEl.classList.contains('smashed')) return;
+            
+            eggEl.classList.add('smashed');
+            eggEl.style.transition = 'all 0.3s';
+            eggEl.style.transform = 'scale(0.6) rotate(25deg)';
+            eggEl.style.opacity = '0.3';
+            
+            // Determine rarity drop
+            const roll = Math.random() * 100;
+            let rarity = 'common';
+            let reward = 50;
+            let special = '';
+            
+            if (roll < 0.1) { // Secret 0.1%
+                rarity = 'secret';
+                const sub = Math.random();
+                if (sub < 0.5) { reward = 100000; special = 'VVIP Token Pack'; }
+                else if (sub < 0.8) { reward = 0; special = 'Royal Rank Ticket (เลือกยศได้)'; }
+                else { reward = 50000; special = 'Secret Item'; }
+            } else if (roll < 2.6) { // Mythical 2.5%
+                rarity = 'mythical';
+                const sub = Math.random();
+                if (sub < 0.2) { reward = 10000; special = 'VIP Token Pack'; }
+                else { reward = 25000; special = 'Mythical Rank Ticket'; }
+            } else if (roll < 22.6) { // Legendary 20%
+                rarity = 'legendary';
+                reward = Math.random() < 0.3 ? 10000 : 5000;
+                special = 'Legendary Token Pack';
+            } else {
+                // Common
+                reward = Math.floor(Math.random() * 490) + 10;
+            }
+            
+            setTimeout(() => {
+                // Apply reward
+                currentUser.tokens = (currentUser.tokens || 0) + reward;
+                updateUserData(currentUser.name, { tokens: currentUser.tokens });
+                updateCreditsUI();
+                
+                let msg = `ได้ +${reward} โทเค็น!`;
+                if (special) msg = `ได้รับ ${special} +${reward} โทเค็น!`;
+                
+                // Add to inventory if special
+                if (special) {
+                    if (!currentUser.inventory) currentUser.inventory = [];
+                    currentUser.inventory.push({
+                        id: Date.now(),
+                        name: special,
+                        rarity: rarity,
+                        type: 'special',
+                        obtained: new Date().toISOString()
+                    });
+                    updateUserData(currentUser.name, { inventory: currentUser.inventory });
+                }
+                
+                showToast(msg, rarity === 'secret' || rarity === 'mythical' ? 'yellow' : 'green');
+                logActivity(currentUser.name, 'EGG_SMASH', `${rarity} - ${special || reward + ' tokens'}`);
+                
+                // Reset egg visual after delay
+                setTimeout(() => {
+                    if (eggEl && eggEl.parentNode) {
+                        eggEl.style.transform = '';
+                        eggEl.style.opacity = '1';
+                        eggEl.classList.remove('smashed');
+                    }
+                }, 1200);
+            }, 650);
+        }
+        
+        function refreshEggs() {
+            if (currentUser.eggRefreshesLeft > 0) {
+                currentUser.eggRefreshesLeft--;
+                updateUserData(currentUser.name, { eggRefreshesLeft: currentUser.eggRefreshesLeft });
+                showToast(`รีเฟรชไข่แล้ว เหลือ ${currentUser.eggRefreshesLeft} ครั้ง`, 'green');
+            } else {
+                if ((currentUser.tokens || 0) < 100) {
+                    showWarning('โทเค็นไม่พอสำหรับรีเฟรช (ต้อง 100)');
+                    return;
+                }
+                currentUser.tokens -= 100;
+                currentUser.eggRefreshesLeft = 3;
+                updateUserData(currentUser.name, { tokens: currentUser.tokens, eggRefreshesLeft: currentUser.eggRefreshesLeft });
+                showToast('เสีย 100 โทเค็น รีเฟรชครบ 3 ครั้ง', 'yellow');
+            }
+            
+            // Reset egg visuals
+            for (let i = 0; i < 3; i++) {
+                const el = document.getElementById(`egg-${i}`);
+                if (el) {
+                    el.style.transform = '';
+                    el.style.opacity = '1';
+                    el.classList.remove('smashed');
+                }
+            }
+            
+            document.getElementById('refresh-text').textContent = `รีเฟรชไข่ (เหลือ ${currentUser.eggRefreshesLeft} ครั้ง)`;
+        }
+        
+        // ==================== SHOP ====================
+        function renderOfficialShop() {
+            const container = document.getElementById('official-shop-grid');
+            if (!container) return;
+            const prices = getShopPrices();
+            
+            container.innerHTML = '';
+            
+            Object.keys(prices).forEach(rankName => {
+                const price = prices[rankName];
+                const div = document.createElement('div');
+                div.className = `bg-zinc-950 border border-yellow-700 rounded-3xl p-5 item-card`;
+                div.innerHTML = `
+                    <div class="font-bold text-lg mb-1">${rankName}</div>
+                    <div class="text-yellow-400 text-2xl font-black mb-3">${price.toLocaleString()} <span class="text-xs">โทเค็น</span></div>
+                    <button onclick="buyOfficialRank('${rankName}', ${price})" class="w-full py-2.5 text-sm font-bold bg-yellow-600 hover:bg-yellow-500 text-black rounded-2xl">ซื้อด้วยโทเค็น</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function buyOfficialRank(rankName, price) {
+            if (!currentUser || (currentUser.tokens || 0) < price) {
+                showWarning('โทเค็นไม่พอ');
+                return;
+            }
+            
+            currentUser.tokens -= price;
+            if (!currentUser.inventory) currentUser.inventory = [];
+            currentUser.inventory.push({
+                id: Date.now(),
+                name: `ตั๋ว ${rankName}`,
+                rarity: 'legendary',
+                type: 'rank_ticket',
+                obtained: new Date().toISOString()
+            });
+            
+            updateUserData(currentUser.name, { tokens: currentUser.tokens, inventory: currentUser.inventory });
+            updateCreditsUI();
+            showToast(`ซื้อ ${rankName} สำเร็จ! ใส่กระเป๋าแล้ว`, 'yellow');
+            logActivity(currentUser.name, 'BUY_RANK', `${rankName} for ${price} tokens`);
+            renderOfficialShop();
+        }
+        
+        function renderCommunityMarket() {
+            const container = document.getElementById('community-market');
+            if (!container) return;
+            const listings = getListings().filter(l => l.seller !== currentUser.name);
+            
+            container.innerHTML = '';
+            
+            if (listings.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center text-zinc-500 py-8">ยังไม่มีไอเท็มในตลาดผู้เล่น</div>`;
+                return;
+            }
+            
+            listings.forEach(listing => {
+                const div = document.createElement('div');
+                div.className = `bg-zinc-950 border border-yellow-800 rounded-3xl p-5 item-card`;
+                const imgHTML = listing.image ? `<img src="${listing.image}" class="w-full h-32 object-cover rounded-2xl mb-3">` : '';
+                div.innerHTML = `
+                    ${imgHTML}
+                    <div class="font-bold">${listing.item_name}</div>
+                    <div class="text-xs text-zinc-400 mb-1">โดย ${listing.seller}</div>
+                    <div class="text-yellow-400 text-xl font-black mb-3">${listing.price.toLocaleString()} โทเค็น</div>
+                    <div class="flex gap-x-2">
+                        <button onclick="buyListing(${listing.id})" class="flex-1 py-2 text-sm font-bold bg-yellow-600 hover:bg-yellow-500 text-black rounded-2xl">ซื้อ</button>
+                        <button onclick="reportListing(${listing.id})" class="px-3 py-2 text-xs bg-red-950 text-red-400 rounded-2xl">รายงาน</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function buyListing(listingId) {
+            let listings = getListings();
+            const idx = listings.findIndex(l => l.id === listingId);
+            if (idx === -1) return;
+            
+            const listing = listings[idx];
+            if ((currentUser.tokens || 0) < listing.price) {
+                showWarning('โทเค็นไม่พอ');
+                return;
+            }
+            
+            currentUser.tokens -= listing.price;
+            if (!currentUser.inventory) currentUser.inventory = [];
+            currentUser.inventory.push({
+                id: Date.now(),
+                name: listing.item_name,
+                rarity: 'rare',
+                type: 'market_item',
+                obtained: new Date().toISOString(),
+                from: listing.seller
+            });
+            
+            // Credit seller
+            const sellerUser = getUserData(listing.seller);
+            if (sellerUser) {
+                sellerUser.tokens = (sellerUser.tokens || 0) + listing.price;
+                updateUserData(listing.seller, { tokens: sellerUser.tokens });
+            }
+            
+            listings.splice(idx, 1);
+            saveListings(listings);
+            
+            updateUserData(currentUser.name, { tokens: currentUser.tokens, inventory: currentUser.inventory });
+            updateCreditsUI();
+            showToast(`ซื้อ ${listing.item_name} สำเร็จ!`, 'green');
+            renderCommunityMarket();
+        }
+        
+        function openSellModal() {
+            document.getElementById('sell-modal').classList.remove('hidden');
+            document.getElementById('sell-modal').classList.add('flex');
+        }
+        function closeSellModal() {
+            document.getElementById('sell-modal').classList.remove('flex');
+            document.getElementById('sell-modal').classList.add('hidden');
+        }
+        
+        function createListing() {
+            const name = document.getElementById('sell-name').value.trim();
+            const desc = document.getElementById('sell-desc').value.trim();
+            const price = parseInt(document.getElementById('sell-price').value);
+            const imageInput = document.getElementById('sell-image');
+            
+            if (!name || !price) { alert('กรุณากรอกชื่อและราคา'); return; }
+            
+            let imageBase64 = null;
+            if (imageInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageBase64 = e.target.result;
+                    finishCreateListing(name, desc, price, imageBase64);
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                finishCreateListing(name, desc, price, null);
+            }
+        }
+        
+        function finishCreateListing(name, desc, price, imageBase64) {
+            let listings = getListings();
+            // Limit per user
+            const userListings = listings.filter(l => l.seller === currentUser.name).length;
+            if (userListings >= 5) {
+                alert('คุณลงขายได้สูงสุด 5 รายการ');
+                return;
+            }
+            
+            listings.push({
+                id: Date.now(),
+                seller: currentUser.name,
+                item_name: name,
+                desc: desc,
+                price: price,
+                image: imageBase64,
+                created: new Date().toISOString()
+            });
+            saveListings(listings);
+            
+            closeSellModal();
+            showToast('ลงขายสำเร็จ!', 'yellow');
+            renderCommunityMarket();
+            logActivity(currentUser.name, 'CREATE_LISTING', `${name} @ ${price} tokens`);
+        }
+        
+        function reportListing(listingId) {
+            if (confirm('รายงานไอเท็มนี้?')) {
+                logActivity(currentUser.name, 'REPORT_LISTING', listingId);
+                showToast('ขอบคุณที่รายงาน เราจะตรวจสอบ', 'green');
+            }
+        }
+        
+        // ==================== INVENTORY ====================
+        function openInventoryModal() {
+            if (!currentUser) return;
+            document.getElementById('inventory-modal').classList.remove('hidden');
+            document.getElementById('inventory-modal').classList.add('flex');
+            
+            // Update balances
+            document.getElementById('inv-token-balance').textContent = currentUser.tokens || 0;
+            document.getElementById('inv-web-balance').textContent = currentUser.web_balance || 0;
+            
+            // Render items
+            renderInventoryItems();
+        }
+        
+        function closeInventoryModal() {
+            document.getElementById('inventory-modal').classList.remove('flex');
+            document.getElementById('inventory-modal').classList.add('hidden');
+        }
+        
+        function renderInventoryItems() {
+            const container = document.getElementById('inventory-items');
+            container.innerHTML = '';
+            
+            if (!currentUser.inventory || currentUser.inventory.length === 0) {
+                container.innerHTML = `<div class="col-span-4 text-center text-zinc-500 py-8">กระเป๋าว่างเปล่า<br>ลองทุบไข่หรือซื้อไอเท็ม</div>`;
+                return;
+            }
+            
+            currentUser.inventory.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = `bg-zinc-900 border border-green-800 rounded-2xl p-4 item-card text-sm`;
+                let rarityColor = item.rarity === 'secret' ? 'text-emerald-400' : item.rarity === 'mythical' ? 'text-purple-400' : item.rarity === 'legendary' ? 'text-yellow-400' : 'text-zinc-400';
+                
+                div.innerHTML = `
+                    <div class="${rarityColor} font-bold">${item.name}</div>
+                    <div class="text-xs text-zinc-500">${item.type || 'item'} • ${new Date(item.obtained).toLocaleDateString('th-TH')}</div>
+                    ${item.from ? `<div class="text-xs text-emerald-500">จาก ${item.from}</div>` : ''}
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function transferTokens() {
+            const username = document.getElementById('trade-username').value.trim();
+            const amount = parseInt(document.getElementById('trade-amount').value);
+            
+            if (!username || !amount || amount <= 0) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
+            if (amount > (currentUser.tokens || 0)) { showWarning('โทเค็นไม่พอ'); return; }
+            if (username.toLowerCase() === currentUser.name.toLowerCase()) { alert('โอนให้ตัวเองไม่ได้'); return; }
+            
+            const targetUser = getUserData(username);
+            if (!targetUser) { alert('ไม่พบผู้ใช้ชื่อนี้'); return; }
+            
+            currentUser.tokens -= amount;
+            targetUser.tokens = (targetUser.tokens || 0) + amount;
+            
+            updateUserData(currentUser.name, { tokens: currentUser.tokens });
+            updateUserData(username, { tokens: targetUser.tokens });
+            
+            updateCreditsUI();
+            document.getElementById('inv-token-balance').textContent = currentUser.tokens;
+            
+            showToast(`โอน ${amount} โทเค็นให้ ${username} สำเร็จ`, 'green');
+            logActivity(currentUser.name, 'TRANSFER_TOKENS', `${amount} to ${username}`);
+            
+            // Clear form
+            document.getElementById('trade-username').value = '';
+            document.getElementById('trade-amount').value = '';
+        }
+        
+        // ==================== EXCHANGE SYSTEM ====================
+        function openExchangeModal() {
+            closeInventoryModal();
+            const modal = document.getElementById('exchange-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Preview handler
+            const fileInput = document.getElementById('exchange-screenshot');
+            const previewDiv = document.getElementById('exchange-preview');
+            const previewImg = document.getElementById('exchange-preview-img');
+            
+            fileInput.onchange = function() {
+                if (fileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        previewImg.src = e.target.result;
+                        previewDiv.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                }
+            };
+        }
+        
+        function closeExchangeModal() {
+            document.getElementById('exchange-modal').classList.remove('flex');
+            document.getElementById('exchange-modal').classList.add('hidden');
+        }
+        
+        function processExchange() {
+            const amount = parseInt(document.getElementById('exchange-amount').value);
+            const fileInput = document.getElementById('exchange-screenshot');
+            
+            if (!amount || amount <= 0) { alert('กรุณากรอกจำนวนเงิน'); return; }
+            if (!fileInput.files.length) { alert('กรุณาอัปโหลดภาพหลักฐาน'); return; }
+            
+            const actualTokens = currentUser.tokens || 0;
+            
+            // Cheat detection: if claimed significantly more than actual
+            if (amount > actualTokens * 1.15) {
+                // PUNISH
+                const punishAmount = 50;
+                currentUser.web_balance = (currentUser.web_balance || 0) - punishAmount;
+                if (currentUser.web_balance < 0) currentUser.web_balance = currentUser.web_balance; // allow negative
+                
+                updateUserData(currentUser.name, { web_balance: currentUser.web_balance });
+                
+                closeExchangeModal();
+                
+                const punishModal = document.createElement('div');
+                punishModal.className = `fixed inset-0 bg-black/95 flex items-center justify-center z-[500] p-6`;
+                punishModal.innerHTML = `
+                    <div class="bg-red-950 border-2 border-red-600 rounded-3xl max-w-md w-full p-8 text-center">
+                        <div class="text-6xl mb-4">⚠️</div>
+                        <div class="text-3xl font-black text-red-400 mb-4">การลงโทษ: พยายามโกง</div>
+                        <div class="text-white mb-6 leading-relaxed">
+                            คุณอ้างเงินในเกม <span class="font-black">${amount}</span> โทเค็น<br>
+                            แต่ระบบตรวจพบว่าคุณมีจริงเพียง <span class="font-black">${actualTokens}</span> โทเค็น<br><br>
+                            <span class="text-red-400 font-bold">เงินเว็บของคุณถูกหัก ${punishAmount} หน่วย</span><br>
+                            หากติดลบจะถูกหักต่อเนื่องทุกครั้งที่พยายามโกง
+                        </div>
+                        <button onclick="this.closest('.fixed').remove()" class="w-full py-3 font-bold bg-red-700 hover:bg-red-600 rounded-2xl">เข้าใจและยอมรับ</button>
+                    </div>
+                `;
+                document.body.appendChild(punishModal);
+                logActivity(currentUser.name, 'CHEAT_ATTEMPT', `Claimed ${amount} but has ${actualTokens}`);
+                return;
+            }
+            
+            // Success
+            currentUser.tokens = actualTokens - amount;
+            currentUser.web_balance = (currentUser.web_balance || 0) + Math.floor(amount / 5); // 5:1 rate example
+            
+            updateUserData(currentUser.name, { 
+                tokens: currentUser.tokens, 
+                web_balance: currentUser.web_balance 
+            });
+            
+            closeExchangeModal();
+            
+            const successModal = document.createElement('div');
+            successModal.className = `fixed inset-0 bg-black/95 flex items-center justify-center z-[500] p-6`;
+            successModal.innerHTML = `
+                <div class="bg-emerald-950 border-2 border-emerald-600 rounded-3xl max-w-md w-full p-8 text-center">
+                    <div class="text-6xl mb-4">✅</div>
+                    <div class="text-3xl font-black text-emerald-400 mb-2">แปลงสำเร็จ!</div>
+                    <div class="text-white mb-6">
+                        หัก ${amount} โทเค็นจากเกม<br>
+                        ได้รับ <span class="font-black text-2xl">${Math.floor(amount / 5)}</span> เครดิตเว็บ
+                    </div>
+                    <button onclick="this.closest('.fixed').remove(); openInventoryModal();" class="w-full py-3 font-bold bg-emerald-600 hover:bg-emerald-500 rounded-2xl">ดูกระเป๋า</button>
+                </div>
+            `;
+            document.body.appendChild(successModal);
+            
+            updateCreditsUI();
+            logActivity(currentUser.name, 'EXCHANGE_SUCCESS', `${amount} tokens → ${Math.floor(amount/5)} web credits`);
+        }
+        
+        // ==================== DEV PANEL ====================
+        function openDevModal() {
+            const modal = document.getElementById('dev-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            if (devLoggedIn) showDevPanel();
+            else {
+                document.getElementById('dev-login-view').classList.remove('hidden');
+                document.getElementById('dev-panel-view').classList.add('hidden');
+            }
+        }
+        function closeDevModal() { 
+            document.getElementById('dev-modal').classList.remove('flex'); 
+            document.getElementById('dev-modal').classList.add('hidden'); 
+        }
+        
+        function loginDev() {
+            if (document.getElementById('dev-password').value.trim() === 'Costfourtigger') {
+                devLoggedIn = true;
+                showDevPanel();
+                showToast('เข้าสู่โหมดผู้ดูแล', 'green');
+                logActivity('ADMIN', 'DEV_LOGIN', 'เข้าสู่ระบบผู้ดูแล');
+            } else {
+                alert('รหัสผ่านไม่ถูกต้อง');
+            }
+        }
+        
+        function logoutDev() {
+            devLoggedIn = false;
+            closeDevModal();
+            // Refresh leaderboards to hide admin columns
+            renderGlobalLeaderboard();
+        }
+        
+        function showDevPanel() {
+            document.getElementById('dev-login-view').classList.add('hidden');
+            document.getElementById('dev-panel-view').classList.remove('hidden');
+            renderDevUsers();
+            renderDeptToggles();
+            renderLogs('');
+            renderDevShopPrices();
+            
+            const vEl = document.getElementById('dev-visits-count');
+            if (vEl) vEl.textContent = localStorage.getItem('rta_unified_visits') || '0';
+        }
+        
+        function switchDevTab(tab) {
+            ['users-tab', 'depts-tab', 'logs-tab', 'shop-tab'].forEach(t => {
+                const el = document.getElementById('dev-' + t);
+                if (el) el.classList.add('hidden');
+            });
+            document.getElementById('dev-' + tab).classList.remove('hidden');
+            
+            // Update active styles
+            document.querySelectorAll('[id^="dev-tab-"]').forEach(el => el.classList.remove('border-b-2', 'text-green-300'));
+            document.getElementById('dev-tab-' + tab.split('-')[0]).classList.add('border-b-2', 'text-green-300');
+        }
+        
+        function renderDevUsers() {
+            const container = document.getElementById('users-list');
+            const countEl = document.getElementById('user-count');
+            const users = getUsers();
+            countEl.textContent = `${users.length} คน`;
+            container.innerHTML = '';
+            
+            users.forEach((u, idx) => {
+                const div = document.createElement('div');
+                div.className = `bg-black/60 border border-green-900 rounded-2xl px-4 py-3 text-xs flex items-center justify-between gap-x-3`;
+                div.innerHTML = `
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-emerald-300">${u.name}</div>
+                        <div class="text-[10px] text-zinc-400">ยศ: <span class="text-green-400">${u.green||0}</span> • กรม: <span class="text-red-400">${u.red||0}</span> • โทเค็น: <span class="text-yellow-400">${u.tokens||0}</span></div>
+                    </div>
+                    <div class="flex gap-x-1">
+                        <button onclick="addCreditToUser(${idx}, 'green', 5)" class="px-2.5 py-1 bg-green-700 hover:bg-green-600 text-[10px] rounded-xl">+5 ยศ</button>
+                        <button onclick="addCreditToUser(${idx}, 'tokens', 1000)" class="px-2.5 py-1 bg-yellow-700 hover:bg-yellow-600 text-[10px] rounded-xl">+1K โทเค็น</button>
+                        <button onclick="deleteUser(${idx})" class="px-2 py-1 text-red-400 hover:text-red-300"><i class="fas fa-trash fa-sm"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function addCreditToUser(idx, type, amount) {
+            const users = getUsers();
+            if (!users[idx]) return;
+            if (type === 'green') users[idx].green = (users[idx].green || 0) + amount;
+            else if (type === 'tokens') users[idx].tokens = (users[idx].tokens || 0) + amount;
+            saveUsers(users);
+            if (currentUser && currentUser.name === users[idx].name) { currentUser = users[idx]; updateCreditsUI(); }
+            renderDevUsers();
+            showToast(`เติมให้ ${users[idx].name} สำเร็จ`, 'green');
+        }
+        
+        function deleteUser(idx) {
+            if (!confirm('ลบผู้ใช้นี้?')) return;
+            const users = getUsers();
+            const name = users[idx].name;
+            users.splice(idx, 1);
+            saveUsers(users);
+            renderDevUsers();
+            if (currentUser && currentUser.name === name) logoutUser();
+        }
+        
+        function renderDeptToggles() {
+            const container = document.getElementById('dept-toggle-list');
+            container.innerHTML = '';
+            const enabled = getEnabledDepts();
+            
+            departments.forEach(dept => {
+                const isOn = enabled[dept.id] !== false;
+                const div = document.createElement('div');
+                div.className = `flex items-center justify-between bg-black/60 border border-green-900 rounded-2xl px-4 py-3`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-x-3">
+                        <span class="text-xl">${dept.icon}</span>
+                        <span class="font-medium">${dept.name}</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" ${isOn ? 'checked' : ''} class="sr-only peer" onchange="toggleDept('${dept.id}', this.checked)">
+                        <div class="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                    </label>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function toggleDept(deptId, isEnabled) {
+            const enabled = getEnabledDepts();
+            enabled[deptId] = isEnabled;
+            saveEnabledDepts(enabled);
+            logActivity('ADMIN', 'TOGGLE_DEPT', `${deptId} ${isEnabled ? 'เปิด' : 'ปิด'}`);
+            if (currentUser) renderExamDeptGrid();
+        }
+        
+        function renderLogs(filter = '') {
+            const container = document.getElementById('logs-list');
+            if (!container) return;
+            let logs = getGlobalLogs();
+            const f = filter.toLowerCase().trim();
+            if (f) {
+                logs = logs.filter(l => 
+                    (l.user || '').toLowerCase().includes(f) || 
+                    (l.action || '').toLowerCase().includes(f) || 
+                    (l.detail || '').toLowerCase().includes(f)
+                );
+            }
+            if (logs.length === 0) {
+                container.innerHTML = '<div class="text-zinc-500 text-center py-4">ไม่มีบันทึก</div>';
+                return;
+            }
+            container.innerHTML = logs.map(l => {
+                const time = new Date(l.time).toLocaleString('th-TH', {hour12: false, month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+                return `
+                    <div class="log-row flex gap-x-3 px-2 py-1.5 hover:bg-white/5 rounded-xl border-b border-white/10 last:border-none">
+                        <div class="text-emerald-400 w-28 shrink-0 font-mono">${time}</div>
+                        <div class="font-bold text-yellow-400 w-24 shrink-0">${l.user}</div>
+                        <div class="text-green-300 w-36 shrink-0">${l.action}</div>
+                        <div class="text-zinc-400 flex-1 truncate">${l.detail || ''}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function filterLogs() {
+            const val = document.getElementById('log-filter').value;
+            renderLogs(val);
+        }
+        
+        function clearLogs() {
+            if (confirm('ล้าง logs ทั้งหมด?')) {
+                localStorage.removeItem('rta_unified_global_logs');
+                renderLogs('');
+                logActivity('ADMIN', 'CLEAR_LOGS', 'ล้าง logs');
+            }
+        }
+        
+        function renderDevShopPrices() {
+            const container = document.getElementById('dev-shop-prices');
+            if (!container) return;
+            const prices = getShopPrices();
+            container.innerHTML = '';
+            
+            Object.keys(prices).forEach(rank => {
+                const div = document.createElement('div');
+                div.className = `flex items-center gap-x-3 bg-black/60 border border-yellow-900 rounded-2xl px-4 py-2`;
+                div.innerHTML = `
+                    <div class="flex-1 font-medium">${rank}</div>
+                    <input type="number" value="${prices[rank]}" id="price-${rank.replace(/\s/g,'')}" class="w-32 bg-black border border-yellow-700 rounded-xl px-3 py-1 text-sm">
+                    <span class="text-xs text-yellow-500">โทเค็น</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function saveShopPrices() {
+            const prices = getShopPrices();
+            Object.keys(prices).forEach(rank => {
+                const input = document.getElementById('price-' + rank.replace(/\s/g,''));
+                if (input) prices[rank] = parseInt(input.value) || prices[rank];
+            });
+            saveShopPrices(prices);
+            showToast('บันทึกราคาร้านค้าแล้ว', 'green');
+            if (!document.getElementById('minigame-section').classList.contains('hidden')) {
+                renderOfficialShop();
+            }
+        }
+        
+        function clearAllData() { 
+            if (!confirm('ล้างข้อมูลทั้งหมด?')) return; 
+            localStorage.clear(); 
+            location.reload(); 
+        }
+        
+        function exportAllData() {
+            const data = {
+                users: getUsers(),
+                logs: getGlobalLogs(),
+                listings: getListings(),
+                shopPrices: getShopPrices(),
+                enabledDepts: getEnabledDepts(),
+                exported: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); 
+            a.href = url; 
+            a.download = `rta_unified_backup_${new Date().toISOString().slice(0,10)}.json`; 
+            a.click(); 
+            URL.revokeObjectURL(url);
+        }
+        
+        function renderAnnouncement() {
+            const box = document.getElementById('announcement-box');
+            const textEl = document.getElementById('announcement-text');
+            const timeEl = document.getElementById('announcement-time');
+            if (!box || !textEl) return;
+            
+            const announcements = getAnnouncements();
+            if (announcements.length === 0) {
+                box.classList.add('hidden');
+                return;
+            }
+            
+            const latest = announcements[0];
+            textEl.innerHTML = latest.text.replace(/\n/g, '<br>');
+            timeEl.textContent = `โพสต์เมื่อ ${latest.time} โดย ${latest.by || 'ผู้ดูแล'}`;
+            box.classList.remove('hidden');
+        }
+        
+        // ==================== INIT ====================
+        function initializeApp() {
+            initTailwind();
+            initSnow();
+            loadBannedUsers();
+            
+            // Visit counter
+            let visits = parseInt(localStorage.getItem('rta_unified_visits') || '0') + 1;
+            localStorage.setItem('rta_unified_visits', visits);
+            
+            // Seed demo users if empty
+            let existingUsers = getUsers();
+            if (existingUsers.length === 0) {
+                const now = Date.now();
+                const demo = [
+                    { name: "ทหารกล้า2026", pass: "demo123", green: 12, red: 8, tokens: 1250, web_balance: 340, inventory: [{id:1,name:"ตั๋วยศพันเอก",rarity:"legendary",type:"rank_ticket",obtained:new Date(now-86400000).toISOString()}], created: new Date(now-172800000).toISOString(), completedDepts: { "yutthasuksa": {score:92,date:new Date(now-86400000).toISOString()} } },
+                    { name: "ยอดรบพิทักษ์", pass: "demo", green: 5, red: 15, tokens: 890, web_balance: 120, inventory: [], created: new Date(now-432000000).toISOString(), completedDepts: { "thahanma": {score:95,date:new Date(now-172800000).toISOString()} } }
+                ];
+                localStorage.setItem('rta_unified_users', JSON.stringify(demo));
+                
+                // Seed some logs
+                const demoLogs = [
+                    { time: new Date(now-7200000).toISOString(), user: "ทหารกล้า2026", action: "REGISTER", detail: "สมัครบัญชีใหม่" },
+                    { time: new Date(now-7000000).toISOString(), user: "ทหารกล้า2026", action: "SPIN_RANK", detail: "พันเอก (super_rare) +10 tokens" },
+                    { time: new Date(now-3600000).toISOString(), user: "ยอดรบพิทักษ์", action: "FINISH_EXAM", detail: "thahanma | 19/20 | Score 95 | +95 tokens" }
+                ];
+                localStorage.setItem('rta_unified_global_logs', JSON.stringify(demoLogs));
+            }
+            
+            // Auto login
+            const savedName = getCurrentUserName();
+            if (savedName) {
+                const user = getUserData(savedName);
+                if (user && !isBanned(savedName)) {
+                    currentUser = user;
+                    document.getElementById('auth-gate').classList.add('hidden');
+                    updateUIAfterLogin();
+                } else {
+                    clearCurrentUser();
+                }
+            }
+            
+            updateUserStatusBar();
+            showAuthTab('register');
+            
+            // Keyboard for answer
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const input = document.getElementById('answer-input');
+                    if (input && document.activeElement === input && !document.getElementById('dynamic-exam-area')?.classList.contains('hidden')) {
+                        e.preventDefault();
+                        submitAnswerAndNext();
+                    }
+                }
+            });
+            
+            console.log('%c[RTA Unified] ระบบรวมทุกอย่างพร้อมใช้งาน - สุ่ม + สอบ + มินิเกม + กระเป๋า + แปลงเงิน + Global Logs', 'color:#4ade80');
+        }
+        
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
